@@ -1,0 +1,138 @@
+html { font-size: 100% }
+h1, h2, h3, h4, h5, h6 { font-size: 200%; }
+
+html { min-height: 100%; }
+body { max-width: 50em; }
+figcaption { text-align: right; }
+li { list-style-position: inside; }
+
+* { overflow-wrap: break-word; }
+figure > * { overflow-x: auto; }
+pre:after { content: " "; }
+
+*                     { margin: 0; }
+* + *                 { margin: 1em 0 0 0; }
+body                  { margin: 0 auto; }
+pre, figcaption, li   { margin: 0; }
+
+body                   { border: 1px solid #222222; }
+header, main, footer   { border: 1px solid #222222; }
+article                { border: 1px solid #222222; }
+figure > *             { border: 1px solid #222222; }
+
+*                    { padding: 0; }
+body                 { padding: 1px; }
+header, main, footer { padding: 1px; }
+article, nav         { padding: 1em; }
+figure > *           { padding: 1em; }
+figure > figcaption  { padding: 1px 1em; }
+
+html                 { background-color: #111111; }
+body                 { background-color: #333333; }
+header, main, footer { background-color: #555555; }
+article, nav         { background-color: #cccccc; }
+figure > *           { background-color: #eeeeee; }
+figure > figcaption  { background-color: #444444; }
+
+body                { color: #444444; }
+figure > figcaption { color: #eeeeee; }
+a:link              { color: #0000ee; }
+a:visited           { color: #551a8b; }
+
+html {
+    background-size: cover;
+    background-image:
+        radial-gradient(
+            ellipse at top,
+            #00000011 0%,   #22222211 5%,
+            #00000011 10%,  #22222211 15%,
+            #00000011 20%,  #22222211 25%,
+            #00000011 30%,  #22222211 35%,
+            #00000011 40%,  #22222211 45%,
+            #00000011 50%,  #22222211 55%,
+            #00000011 60%,  #22222211 65%,
+            #00000011 70%,  #22222211 75%,
+            #00000011 80%,  #22222211 85%,
+            #00000011 90%,  #22222211 95%,
+            #00000011 100%
+        ),
+        radial-gradient(
+            ellipse at bottom,
+            #00000011 0%,   #22222211 5%,
+            #00000011 10%,  #22222211 15%,
+            #00000011 20%,  #22222211 25%,
+            #00000011 30%,  #22222211 35%,
+            #00000011 40%,  #22222211 45%,
+            #00000011 50%,  #22222211 55%,
+            #00000011 60%,  #22222211 65%,
+            #00000011 70%,  #22222211 75%,
+            #00000011 80%,  #22222211 85%,
+            #00000011 90%,  #22222211 95%,
+            #00000011 100%
+        );
+}
+
+h1 {
+    counter-reset: c1 c2 c3 c4 c5;
+}
+
+h2 {
+    counter-reset: c2 c3 c4 c5;
+}
+
+h3 {
+    counter-reset: c3 c4 c5;
+}
+
+h4 {
+    counter-reset: c4 c5;
+}
+
+h5 {
+    counter-reset: c5;
+}
+
+h2:before {
+    margin: 0 1em 0 0;
+    content:
+        counter(c1);
+    counter-increment: c1;
+}
+
+h3:before {
+    margin: 0 1em 0 0;
+    content:
+        counter(c1) "."
+        counter(c2);
+    counter-increment: c2;
+}
+
+h4:before {
+    margin: 0 1em 0 0;
+    content:
+        counter(c1) "."
+        counter(c2) "."
+        counter(c3);
+    counter-increment: c3;
+}
+
+h5:before {
+    margin: 0 1em 0 0;
+    content:
+        counter(c1) "."
+        counter(c2) "."
+        counter(c3) "."
+        counter(c4);
+    counter-increment: c4;
+}
+
+h6:before {
+    margin: 0 1em 0 0;
+    content:
+        counter(c1) "."
+        counter(c2) "."
+        counter(c3) "."
+        counter(c4) "."
+        counter(c5);
+    counter-increment: c5;
+}
