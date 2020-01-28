@@ -7,6 +7,7 @@ figcaption { text-align: right; }
 li { list-style-position: inside; }
 
 * { overflow-wrap: break-word; }
+figure { overflow-x: auto; }
 figure > * { overflow-x: auto; }
 pre:after { content: " "; }
 
@@ -19,6 +20,7 @@ body                   { border: 1px solid #222222; }
 header, main, footer   { border: 1px solid #222222; }
 article                { border: 1px solid #222222; }
 figure > *             { border: 1px solid #222222; }
+table, th, td          { border: 1px solid #222222; }
 
 *                    { padding: 0; }
 body                 { padding: 1px; }
@@ -26,6 +28,7 @@ header, main, footer { padding: 1px; }
 article, nav         { padding: 1em; }
 figure > *           { padding: 1em; }
 figure > figcaption  { padding: 1px 1em; }
+th, td               { padding: 1px 1em; }
 
 html                 { background-color: #111111; }
 body                 { background-color: #333333; }
