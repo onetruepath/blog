@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>One True Path</title>
+        <link href="0.css" rel="stylesheet">
+    </head>
+    <body>
+        <main>
+            <article>
+                <h1>Pretending to Understand Type Theory</h1>
+                    <h2>2020-02-05</h2>
+                        <h3>Primitives</h3>
+                            <p>
+                                Let's start with Null, Unit, and Bool.
+                                Null is a type with no values.
+                                Unit is a type with one value, which I'll call void.
+                                Bool is a type with two values, which I'll call false and true.
+                            </p>
+
+                            <p>
+                                Now let's add Sigma and Pi.
+                                Sigma is an operator that creates a dependent pair type, i.e. a pair type in which the type of the second element can depend on the value of the first element.
+                                Pi is an operator that creates a dependent function type, i.e. a function type in which the type of the output can depend on the value of the input.
+                            </p>
+
+                            <p>
+                                Let's use (Sigma (: t T) (F t)) to denote dependent pair types and (Pi (: t T) (F t)) to denote dependent function types.
+                                In this context t is a value of type T, while F is a function that accepts a value of type T and returns a type. The colon denotes type annotation. Parenthesis denote function application.
+                            </p>
+
+                        <h3>Datum Types</h3>
+                            <figure>
+                                <pre>Datum1 := (Sigma (: b Bool) Unit)</pre>
+                                <pre>Datum2 := (Sigma (: b Bool) Datum1)</pre>
+                                <pre>Datum3 := (Sigma (: b Bool) Datum2)</pre>
+                                <pre>Datum4 := (Sigma (: b Bool) Datum3)</pre>
+                                <pre>Datum5 := (Sigma (: b Bool) Datum4)</pre>
+                                <pre>Datum6 := (Sigma (: b Bool) Datum5)</pre>
+                                <pre>Datum7 := (Sigma (: b Bool) Datum6)</pre>
+                                <pre>Datum8 := (Sigma (: b Bool) Datum7)</pre>
+                            </figure>
+
+                            <p>
+                                The type Datum8 is our encoding for a byte.
+                                Conceptually, it's a binary tree of depth eight in which inner nodes are dependent pair types and each leaf node is the Unit type.
+                            </p>
+
+                            <p>
+                                A value of type Datum8 is serialized as eight consecutive bits, followed by a void that occupies no space.
+                                But this can be interpreted as a path through the aforementioned tree, followed by a value of the type that exists at the end of that path.
+                                Let's use 0x00 through 0xff to denote the possible values, and thus the possible paths through a binary tree of depth eight.
+                            </p>
+                        <h3>Union Types</h3>
+                            <figure>
+                                <pre>Union1(T00     T01) := (Sigma (: b Bool) (if b T00 T01))</pre>
+                                <pre>Union2(T00 ... T03) := (Sigma (: b Bool) (if b (Union1 T00     T01) (Union1 T02     T03)))</pre>
+                                <pre>Union3(T00 ... T07) := (Sigma (: b Bool) (if b (Union2 T00 ... T03) (Union2 T04 ... T07)))</pre>
+                                <pre>Union4(T00 ... T0F) := (Sigma (: b Bool) (if b (Union3 T00 ... T07) (Union3 T08 ... T0F)))</pre>
+                                <pre>Union5(T00 ... T1F) := (Sigma (: b Bool) (if b (Union4 T00 ... T0F) (Union4 T10 ... T1F)))</pre>
+                                <pre>Union6(T00 ... T3F) := (Sigma (: b Bool) (if b (Union5 T00 ... T1F) (Union5 T20 ... T3F)))</pre>
+                                <pre>Union7(T00 ... T7F) := (Sigma (: b Bool) (if b (Union6 T00 ... T3F) (Union6 T40 ... T7F)))</pre>
+                                <pre>Union8(T00 ... TFF) := (Sigma (: b Bool) (if b (Union7 T00 ... T7F) (Union7 T80 ... TFF)))</pre>
+                            </figure>
+
+                            <p>
+                                The type Union8 is our encoding for a union type with an eight bit tag.
+                                Conceptually, it's a binary tree of depth eight in which inner nodes are dependent pair types and each leaf node is some type specified by a type parameter.
+                            </p>
+
+                            <p>
+                                A value of type Union8(T00 ... TFF) is serialized as a pair of values concatenated together.
+                                The first element is an eight bit tag value, i.e. a path through the tree.
+                                The second element is a value of the type that was specified by a type parameter and identified by the tag value.
+                            </p>
+
+                            <p>
+                                Note that we should probably allow Null as a default parameter type, such that Union8(Unit) is equivalent to Union8(Unit Null ... Null).
+                            </p>
+                        <h3>Tuple Types</h3>
+                            <figure>
+                                <pre>Tuple1(T00     T01) := (Pi (: b Bool) (if b T00 T01))</pre>
+                                <pre>Tuple2(T00 ... T03) := (Pi (: b Bool) (if b (Tuple1 T00     T01) (Tuple1 T02     T03)))</pre>
+                                <pre>Tuple3(T00 ... T07) := (Pi (: b Bool) (if b (Tuple2 T00 ... T03) (Tuple2 T04 ... T07)))</pre>
+                                <pre>Tuple4(T00 ... T0F) := (Pi (: b Bool) (if b (Tuple3 T00 ... T07) (Tuple3 T08 ... T0F)))</pre>
+                                <pre>Tuple5(T00 ... T1F) := (Pi (: b Bool) (if b (Tuple4 T00 ... T0F) (Tuple4 T10 ... T1F)))</pre>
+                                <pre>Tuple6(T00 ... T3F) := (Pi (: b Bool) (if b (Tuple5 T00 ... T1F) (Tuple5 T20 ... T3F)))</pre>
+                                <pre>Tuple7(T00 ... T7F) := (Pi (: b Bool) (if b (Tuple6 T00 ... T3F) (Tuple6 T40 ... T7F)))</pre>
+                                <pre>Tuple8(T00 ... TFF) := (Pi (: b Bool) (if b (Tuple7 T00 ... T7F) (Tuple7 T80 ... TFF)))</pre>
+                            </figure>
+
+                            <p>
+                                The type Tuple8 is our encoding for a tuple type with an eight bit index.
+                                Conceptually, it's a binary tree of depth eight in which inner nodes are dependent function types and each leaf node is some type specified by a type parameter.
+                            </p>
+
+                            <p>
+                                A value of type Tuple8(T00 ... TFF) is serialized as a sequence of values concatenated together.
+                                Each element is a value of some type that was specified by a type parameter and identified by the value's position within the tuple.
+                            </p>
+
+                            <p>
+                                Note that we should probably allow Unit as a default parameter type, such that Tuple8(Bool) is equivalent to Tuple8(Bool Unit ... Unit).
+                            </p>
+                        <h3>Nonsense</h3>
+                            <p>
+                                That's about as far as I've gotten so far. Some thoughts:
+                            </p>
+                            <ul>
+                                <li>
+                                    If two types with the same number of inhabitants are equivalent, then every type seems to have many possible encodings.
+                                </li>
+                                <li>
+                                    Even if two types are equivalent by the above definition, associated values aren't necessarily the same size.
+                                    Example: The value 0x00 inhabits Union8(Unit) and occupies eight bits of space.
+                                    The value void occupies Unit and occupies zero bits of space.
+                                </li>
+                                <li>
+                                    Values can inhabit multiple types. Example: The value 0x00 inhabits Union8(Unit) and Union8(Unit, Unit).
+                                </li>
+                                <li>
+                                    If #T denotes the number of values in T, then #Union8(T00 ... TFF) is equal to (sum #T00 ... #TFF) while #Tuple8(T00 ... TFF) is equal to (product #T00 ... #TFF).
+                                </li>
+                                <li>
+                                    I suspect that (Sigma (: t T) (F t)) and (Pi (: t T) (F t)) are equivalent to Union8(T00...) and Tuple8(T00...),
+                                    when the number of inhabitants in T is equal to the number of (non-default) type parameters.
+                                    I guess you'd need some kind of mapping to do anything with that?
+                                </li>
+                                <li>
+                                    The logical gate NAND seems to have type Tuple2(Datum1 Datum1 Datum1 Datum1) and value 0b1110.
+                                </li>
+                                <li>
+                                    There must be a way to encode complex functions without wasting space on a tuple that enumerates every possible result.
+                                    I guess you need a layer of indirection?
+                                    Some kind of pointer to a series of op-codes that are composed to produce the desired output?
+                                    I'm not sure.
+                                </li>
+                            </ul>
+                        <h3>Better Notation</h3>
+                            <figure>
+                                <pre>(+ ...) := Union256(...)</pre>
+                                <pre>(* ...) := Tuple256(...)</pre>
+                                <pre>0 := (+)</pre>
+                                <pre>1 := (+ Unit)</pre>
+                                <pre>2 := (+ Unit Unit)</pre>
+                                <pre>3 := (+ Unit Unit Unit)</pre>
+                                <pre>...</pre>
+                            </figure>
+            </article>
+        </main>
+    </body>
+</html>
