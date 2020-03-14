@@ -2,14 +2,17 @@ html { font-size: 100% }
 h1, h2, h3, h4, h5, h6 { font-size: 200%; }
 
 html { min-height: 100%; }
-body { max-width: 50em; }
+body { max-width: 60em; }
 figcaption { text-align: right; }
 li { list-style-position: inside; }
 
-* { overflow-wrap: break-word; }
+figure { display: flex; }
+figure { flex-direction: column; }
+figure { flex-wrap: wrap; }
+figure { align-content: stretch; }
+figure { justify-content: space-evenly; }
+figure { align-items: stretch; }
 figure { overflow-x: auto; }
-figure > * { overflow-x: auto; }
-pre:after { content: " "; }
 
 *                     { margin: 0; }
 * + *                 { margin: 1em 0 0 0; }
@@ -19,14 +22,14 @@ pre, figcaption, li   { margin: 0; }
 body                   { border: 1px solid #222222; }
 header, main, footer   { border: 1px solid #222222; }
 article                { border: 1px solid #222222; }
-figure > *             { border: 1px solid #222222; }
+figure                 { border: 1px solid #222222; }
 table, th, td          { border: 1px solid #222222; }
 
 *                    { padding: 0; }
 body                 { padding: 1px; }
 header, main, footer { padding: 1px; }
 article, nav         { padding: 1em; }
-figure > *           { padding: 1em; }
+figure > div         { padding: 1em; }
 figure > figcaption  { padding: 1px 1em; }
 th, td               { padding: 1px 1em; }
 
@@ -34,11 +37,12 @@ html                 { background-color: #111111; }
 body                 { background-color: #333333; }
 header, main, footer { background-color: #555555; }
 article, nav         { background-color: #cccccc; }
-figure > *           { background-color: #eeeeee; }
+figure               { background-color: #eeeeee; }
+figure > div         { background-color: #eeeeee; }
 figure > figcaption  { background-color: #444444; }
 
 body                { color: #444444; }
-figure > figcaption { color: #eeeeee; }
+figcaption          { color: #eeeeee; }
 a:link              { color: #0000ee; }
 a:visited           { color: #551a8b; }
 

@@ -32,14 +32,16 @@
 
                         <h3>Datum Types</h3>
                             <figure>
-                                <pre>Datum1 := (Sigma (: b Bool) Unit)</pre>
-                                <pre>Datum2 := (Sigma (: b Bool) Datum1)</pre>
-                                <pre>Datum3 := (Sigma (: b Bool) Datum2)</pre>
-                                <pre>Datum4 := (Sigma (: b Bool) Datum3)</pre>
-                                <pre>Datum5 := (Sigma (: b Bool) Datum4)</pre>
-                                <pre>Datum6 := (Sigma (: b Bool) Datum5)</pre>
-                                <pre>Datum7 := (Sigma (: b Bool) Datum6)</pre>
-                                <pre>Datum8 := (Sigma (: b Bool) Datum7)</pre>
+                                <div>
+                                    <pre>Datum1 := (Sigma (: b Bool) Unit)</pre>
+                                    <pre>Datum2 := (Sigma (: b Bool) Datum1)</pre>
+                                    <pre>Datum3 := (Sigma (: b Bool) Datum2)</pre>
+                                    <pre>Datum4 := (Sigma (: b Bool) Datum3)</pre>
+                                    <pre>Datum5 := (Sigma (: b Bool) Datum4)</pre>
+                                    <pre>Datum6 := (Sigma (: b Bool) Datum5)</pre>
+                                    <pre>Datum7 := (Sigma (: b Bool) Datum6)</pre>
+                                    <pre>Datum8 := (Sigma (: b Bool) Datum7)</pre>
+                                </div>
                             </figure>
 
                             <p>
@@ -54,14 +56,16 @@
                             </p>
                         <h3>Union Types</h3>
                             <figure>
-                                <pre>Union1(T00     T01) := (Sigma (: b Bool) (if b T00 T01))</pre>
-                                <pre>Union2(T00 ... T03) := (Sigma (: b Bool) (if b (Union1 T00     T01) (Union1 T02     T03)))</pre>
-                                <pre>Union3(T00 ... T07) := (Sigma (: b Bool) (if b (Union2 T00 ... T03) (Union2 T04 ... T07)))</pre>
-                                <pre>Union4(T00 ... T0F) := (Sigma (: b Bool) (if b (Union3 T00 ... T07) (Union3 T08 ... T0F)))</pre>
-                                <pre>Union5(T00 ... T1F) := (Sigma (: b Bool) (if b (Union4 T00 ... T0F) (Union4 T10 ... T1F)))</pre>
-                                <pre>Union6(T00 ... T3F) := (Sigma (: b Bool) (if b (Union5 T00 ... T1F) (Union5 T20 ... T3F)))</pre>
-                                <pre>Union7(T00 ... T7F) := (Sigma (: b Bool) (if b (Union6 T00 ... T3F) (Union6 T40 ... T7F)))</pre>
-                                <pre>Union8(T00 ... TFF) := (Sigma (: b Bool) (if b (Union7 T00 ... T7F) (Union7 T80 ... TFF)))</pre>
+                                <div>
+                                    <pre>Union1(T00     T01) := (Sigma (: b Bool) (if b T00 T01))</pre>
+                                    <pre>Union2(T00 ... T03) := (Sigma (: b Bool) (if b (Union1 T00     T01) (Union1 T02     T03)))</pre>
+                                    <pre>Union3(T00 ... T07) := (Sigma (: b Bool) (if b (Union2 T00 ... T03) (Union2 T04 ... T07)))</pre>
+                                    <pre>Union4(T00 ... T0F) := (Sigma (: b Bool) (if b (Union3 T00 ... T07) (Union3 T08 ... T0F)))</pre>
+                                    <pre>Union5(T00 ... T1F) := (Sigma (: b Bool) (if b (Union4 T00 ... T0F) (Union4 T10 ... T1F)))</pre>
+                                    <pre>Union6(T00 ... T3F) := (Sigma (: b Bool) (if b (Union5 T00 ... T1F) (Union5 T20 ... T3F)))</pre>
+                                    <pre>Union7(T00 ... T7F) := (Sigma (: b Bool) (if b (Union6 T00 ... T3F) (Union6 T40 ... T7F)))</pre>
+                                    <pre>Union8(T00 ... TFF) := (Sigma (: b Bool) (if b (Union7 T00 ... T7F) (Union7 T80 ... TFF)))</pre>
+                                </div>
                             </figure>
 
                             <p>
@@ -80,14 +84,16 @@
                             </p>
                         <h3>Tuple Types</h3>
                             <figure>
-                                <pre>Tuple1(T00     T01) := (Pi (: b Bool) (if b T00 T01))</pre>
-                                <pre>Tuple2(T00 ... T03) := (Pi (: b Bool) (if b (Tuple1 T00     T01) (Tuple1 T02     T03)))</pre>
-                                <pre>Tuple3(T00 ... T07) := (Pi (: b Bool) (if b (Tuple2 T00 ... T03) (Tuple2 T04 ... T07)))</pre>
-                                <pre>Tuple4(T00 ... T0F) := (Pi (: b Bool) (if b (Tuple3 T00 ... T07) (Tuple3 T08 ... T0F)))</pre>
-                                <pre>Tuple5(T00 ... T1F) := (Pi (: b Bool) (if b (Tuple4 T00 ... T0F) (Tuple4 T10 ... T1F)))</pre>
-                                <pre>Tuple6(T00 ... T3F) := (Pi (: b Bool) (if b (Tuple5 T00 ... T1F) (Tuple5 T20 ... T3F)))</pre>
-                                <pre>Tuple7(T00 ... T7F) := (Pi (: b Bool) (if b (Tuple6 T00 ... T3F) (Tuple6 T40 ... T7F)))</pre>
-                                <pre>Tuple8(T00 ... TFF) := (Pi (: b Bool) (if b (Tuple7 T00 ... T7F) (Tuple7 T80 ... TFF)))</pre>
+                                <div>
+                                    <pre>Tuple1(T00     T01) := (Pi (: b Bool) (if b T00 T01))</pre>
+                                    <pre>Tuple2(T00 ... T03) := (Pi (: b Bool) (if b (Tuple1 T00     T01) (Tuple1 T02     T03)))</pre>
+                                    <pre>Tuple3(T00 ... T07) := (Pi (: b Bool) (if b (Tuple2 T00 ... T03) (Tuple2 T04 ... T07)))</pre>
+                                    <pre>Tuple4(T00 ... T0F) := (Pi (: b Bool) (if b (Tuple3 T00 ... T07) (Tuple3 T08 ... T0F)))</pre>
+                                    <pre>Tuple5(T00 ... T1F) := (Pi (: b Bool) (if b (Tuple4 T00 ... T0F) (Tuple4 T10 ... T1F)))</pre>
+                                    <pre>Tuple6(T00 ... T3F) := (Pi (: b Bool) (if b (Tuple5 T00 ... T1F) (Tuple5 T20 ... T3F)))</pre>
+                                    <pre>Tuple7(T00 ... T7F) := (Pi (: b Bool) (if b (Tuple6 T00 ... T3F) (Tuple6 T40 ... T7F)))</pre>
+                                    <pre>Tuple8(T00 ... TFF) := (Pi (: b Bool) (if b (Tuple7 T00 ... T7F) (Tuple7 T80 ... TFF)))</pre>
+                                </div>
                             </figure>
 
                             <p>
@@ -137,15 +143,17 @@
                                     I'm not sure.
                                 </li>
                             </ul>
-                        <h3>Better Notation</h3>
+                        <h3>Better Notation?</h3>
                             <figure>
-                                <pre>(+ ...) := Union256(...)</pre>
-                                <pre>(* ...) := Tuple256(...)</pre>
-                                <pre>0 := (+)</pre>
-                                <pre>1 := (+ Unit)</pre>
-                                <pre>2 := (+ Unit Unit)</pre>
-                                <pre>3 := (+ Unit Unit Unit)</pre>
-                                <pre>...</pre>
+                                <div>
+                                    <pre>(+ ...) := Union256(...)</pre>
+                                    <pre>(* ...) := Tuple256(...)</pre>
+                                    <pre>0 := (+)</pre>
+                                    <pre>1 := (+ Unit)</pre>
+                                    <pre>2 := (+ Unit Unit)</pre>
+                                    <pre>3 := (+ Unit Unit Unit)</pre>
+                                    <pre>...</pre>
+                                </div>
                             </figure>
             </article>
         </main>
