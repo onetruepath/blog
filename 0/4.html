@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>One True Path</title>
+        <link href="0.css" rel="stylesheet">
+    </head>
+    <body>
+        <main>
+            <article>
+                <h1>Pretending to Understand Software Architecture</h1>
+                    <h2>2020-03-22</h2>
+                        <h3>Message Objects (Value Objects & Record Objects)</h3>
+                            <ul>
+                                <li>They are immutable.</li>
+                                <li>They do not expose methods or properties that have side-effects.</li>
+                                <li>They do not hold references to service objects.</li>
+                                <li>They do not send messages to service objects.</li>
+                            </ul>
+                        <h3>Value Objects</h3>
+                            <ul>
+                                <li>They hold state that is known to be valid.</li>
+                                <li>They comply with some set of value constraints.</li>
+                                <li>They cannot be created with an invalid state.</li>
+                                <li>Inheritance is used primarily to add additional value constraints.</li>
+                            </ul>
+                        <h3>Record Objects</h3>
+                            <ul>
+                                <li>They hold state that is known to be internally consistent.</li>
+                                <li>They expose some set of properties.</li>
+                                <li>They cannot be created with an inconsistent state.</li>
+                                <li>Inheritance is used primarily to add additional properties.</li>
+                            </ul>
+                        <h3>Service Objects (Ports & Adapters)</h3>
+                            <ul>
+                                <li>They expose methods that have side-effects.</li>
+                            </ul>
+                        <h3>Ports</h3>
+                            <ul>
+                                <li>They cause side-effects by sending messages directly to the host environment.</li>
+                            </ul>
+                        <h3>Adapters</h3>
+                            <ul>
+                                <li>They cause side-effects by sending messages to other service objects.</li>
+                            </ul>
+                        <h3>Comments</h3>
+                                <p>
+                                    The properties of a record object are usually orthogonal to each other, meaning that you can't infer anything about the value of one property based on the value of another.
+                                    I suppose they're basically vectors, and reading a property is basically projecting the vector into a single dimension.
+                                </p>
+                                <p>
+                                    Service objects are usually (always?) immutable.
+                                    Often they're stateless, but sometimes they hold a configuration.
+                                    The configuration constrains the set of interfaces that the service object can reasonably implement.
+                                    A configuration that exposes more properties can generally be used to implement more interfaces.
+                                </p>
+                                <p>
+                                    Most service objects implement an interface, and most interfaces define a protocol for communicating with service objects.
+                                    I suppose it sometimes makes sense to define an interface for communicating with message objects, but that's the exception and not the rule.
+                                </p>
+                                <p>
+                                    Service objects typically control access to an external system that is both stateful and mutable.
+                                    I suspect that all of the methods exposed by those objects should be (a) idempotent and (b) transactional.
+                                </p>
+                                <p>
+                                    Ports should probably be instantiated by the host environment.
+                                    Failing that, they should be instantiated when the component is being initialized.
+                                    That means some kind of dependency injection logic should be executed before you enter the event loop (or when handling the first event, I suppose).
+                                </p>
+                                <p>
+                                    Adapters should probably be instantiated in the same place as ports, although this constrains the set of configurations that can be used to instaniate them.
+                                    Specifically: It means that you can only include values provided by the host environment in the configuration for the adapter.
+                                    (This is because you can't reasonably use IO when the component is being initialized.)
+                                    This potentially forces you to define methods with a large number of parameters, which can be annoying.
+                                    There are ways to mitigate that problem, but in some cases it's better to bite the bullet.
+                                </p>
+                                <p>
+                                    Adapters don't let you do anything that can't be done with ports, but they can be used to create a new layer of abstraction.
+                                    In the best case scenario, that higher layer of abstraction completely hides the previous layer of abstraction while reducing the exposed surface area.
+                                    That decouples higher layers of abstraction from lower layers, such that you can completely replace the lower layers without changing the higher layers.
+                                </p>
+                                <p>
+                                    Service objects can depend on message objects, but message objects should not depend on service objects.
+                                    This mostly follows from the idea that dependency graphs should be acyclic, since service objects necessarily depend on message objects.
+                                    Additionally: Internal service objects should not depend on exported service objects, and exported message objects should not depend on internal message objects.
+                                    Again, this mostly follows from the idea that dependency graphs should be acyclic.
+                                </p>
+                                <p>
+                                    I think it's helpful to maintain a mental model where different objects have different visual metaphors.
+                                    Typically I think of message objects as something physical, like a package, and I think of service objects as something abstract, like the mail system.
+                                    A programming joke that I've heard, paraphrased: "If you ask for a banana, you'll get a monkey that has a banana in one hand and a forest in the other."
+                                    Sometimes it's surprisingly hard not to write software that way, but I do believe that it can be avoided.
+                                    Hopefully some of these ideas are a step in that direction.
+                                </p>
+            </article>
+        </main>
+    </body>
+</html>
