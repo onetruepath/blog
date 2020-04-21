@@ -10,39 +10,47 @@
         <main>
             <article>
                 <h1>Pretending to Understand Software Architecture</h1>
-                    <h2>2020-03-22</h2>
-                        <h3>Message Objects (Value Objects & Record Objects)</h3>
+                    <h2>Object-Oriented Semantics</h2>
+                        <h3>Objects</h3>
                             <ul>
-                                <li>They are immutable.</li>
-                                <li>They do not expose methods or properties that have side-effects.</li>
-                                <li>They do not hold references to service objects.</li>
-                                <li>They do not send messages to service objects.</li>
+                                <li>Objects can't be created with an invalid state.</li>
+                            </ul>
+                        <h3>Message Objects</h3>
+                            <ul>
+                                <li>Message objects are objects.</li>
+                                <li>They're always immutable.</li>
+                                <li>They can't expose methods or properties that consume impure inputs.</li>
+                                <li>They can't expose methods or properties that produce impure outputs.</li>
+                                <li>They can't send messages to service objects.</li>
                             </ul>
                         <h3>Value Objects</h3>
                             <ul>
-                                <li>They hold state that is known to be valid.</li>
-                                <li>They comply with some set of value constraints.</li>
-                                <li>They cannot be created with an invalid state.</li>
+                                <li>Value objects are message objects.</li>
+                                <li>They always comply with some set of value constraints.</li>
                                 <li>Inheritance is used primarily to add additional value constraints.</li>
                             </ul>
                         <h3>Record Objects</h3>
                             <ul>
-                                <li>They hold state that is known to be internally consistent.</li>
-                                <li>They expose some set of properties.</li>
-                                <li>They cannot be created with an inconsistent state.</li>
+                                <li>Record objects are message objects.</li>
+                                <li>They always expose some set of properties.</li>
                                 <li>Inheritance is used primarily to add additional properties.</li>
                             </ul>
-                        <h3>Service Objects (Ports & Adapters)</h3>
+                        <h3>Service Objects</h3>
                             <ul>
-                                <li>They expose methods that have side-effects.</li>
+                                <li>Service objects are objects.</li>
+                                <li>They can expose methods that consume impure inputs.</li>
+                                <li>They can expose methods that produce impure outputs.</li>
+                                <li>They can send messages to service objects.</li>
                             </ul>
                         <h3>Ports</h3>
                             <ul>
-                                <li>They cause side-effects by sending messages directly to the host environment.</li>
+                                <li>Ports are service objects.</li>
+                                <li>They can send messages directly to the host environment.</li>
                             </ul>
                         <h3>Adapters</h3>
                             <ul>
-                                <li>They cause side-effects by sending messages to other service objects.</li>
+                                <li>Adapters are service objects.</li>
+                                <li>They can't send messages directly to the host environment.</li>
                             </ul>
                         <h3>Comments</h3>
                                 <p>
@@ -69,22 +77,9 @@
                                     That means some kind of dependency injection logic should be executed before you enter the event loop (or when handling the first event, I suppose).
                                 </p>
                                 <p>
-                                    Adapters should probably be instantiated in the same place as ports, although this constrains the set of configurations that can be used to instaniate them.
-                                    Specifically: It means that you can only include values provided by the host environment in the configuration for the adapter.
-                                    (This is because you can't reasonably use IO when the component is being initialized.)
-                                    This potentially forces you to define methods with a large number of parameters, which can be annoying.
-                                    There are ways to mitigate that problem, but in some cases it's better to bite the bullet.
-                                </p>
-                                <p>
                                     Adapters don't let you do anything that can't be done with ports, but they can be used to create a new layer of abstraction.
                                     In the best case scenario, that higher layer of abstraction completely hides the previous layer of abstraction while reducing the exposed surface area.
                                     That decouples higher layers of abstraction from lower layers, such that you can completely replace the lower layers without changing the higher layers.
-                                </p>
-                                <p>
-                                    Service objects can depend on message objects, but message objects should not depend on service objects.
-                                    This mostly follows from the idea that dependency graphs should be acyclic, since service objects necessarily depend on message objects.
-                                    Additionally: Internal service objects should not depend on exported service objects, and exported message objects should not depend on internal message objects.
-                                    Again, this mostly follows from the idea that dependency graphs should be acyclic.
                                 </p>
                                 <p>
                                     I think it's helpful to maintain a mental model where different objects have different visual metaphors.
@@ -93,6 +88,34 @@
                                     Sometimes it's surprisingly hard not to write software that way, but I do believe that it can be avoided.
                                     Hopefully some of these ideas are a step in that direction.
                                 </p>
+                    <h2>Anatomy of a Software Component</h2>
+                        <h3>Public Specification</h3>
+                            <ul>
+                                <li>The public specification defines message objects and service interfaces.</li>
+                                <li>It does not define service objects.</li>
+                                <li>It does not depend on the internal specification, the internal implementation, or the public implementation.</li>
+                                <li>Every type that it defines has public visibility.</li>
+                            </ul>
+                        <h3>Internal Specification</h3>
+                            <ul>
+                                <li>The internal specification defines message objects and service interfaces.</li>
+                                <li>It does not define service objects.</li>
+                                <li>It does not depend on the internal implementation or the public implementation.</li>
+                                <li>Every type that it defines has internal visibility.</li>
+                            </ul>
+                        <h3>Internal Implementation</h3>
+                            <ul>
+                                <li>The internal implementation defines service objects.</li>
+                                <li>It does not define message objects or service interfaces.</li>
+                                <li>It does not depend on the public implementation.</li>
+                                <li>Every type that it defines has internal visibility.</li>
+                            </ul>
+                        <h3>Public Implementation</h3>
+                            <ul>
+                                <li>The public implementation defines service objects.</li>
+                                <li>It does not define message objects or service interfaces.</li>
+                                <li>Every type that it defines has public visibility.</li>
+                            </ul>
             </article>
         </main>
     </body>
