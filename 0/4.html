@@ -19,8 +19,8 @@
                             <ul>
                                 <li>Message objects are objects.</li>
                                 <li>They're always immutable.</li>
-                                <li>They can't expose methods or properties that consume impure inputs.</li>
-                                <li>They can't expose methods or properties that produce impure outputs.</li>
+                                <li>They can't expose methods that have impure preconditions.</li>
+                                <li>They can't expose methods that have impure postconditions.</li>
                                 <li>They can't send messages to service objects.</li>
                             </ul>
                         <h3>Value Objects</h3>
@@ -38,8 +38,8 @@
                         <h3>Service Objects</h3>
                             <ul>
                                 <li>Service objects are objects.</li>
-                                <li>They can expose methods that consume impure inputs.</li>
-                                <li>They can expose methods that produce impure outputs.</li>
+                                <li>They can expose methods that have impure preconditions.</li>
+                                <li>They can expose methods that have impure postconditions.</li>
                                 <li>They can send messages to service objects.</li>
                             </ul>
                         <h3>Ports</h3>
