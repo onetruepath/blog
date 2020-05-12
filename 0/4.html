@@ -72,11 +72,6 @@
                                     I suspect that all of the methods exposed by those objects should be (a) idempotent and (b) transactional.
                                 </p>
                                 <p>
-                                    Ports should probably be instantiated by the host environment.
-                                    Failing that, they should be instantiated when the component is being initialized.
-                                    That means some kind of dependency injection logic should be executed before you enter the event loop (or when handling the first event, I suppose).
-                                </p>
-                                <p>
                                     Adapters don't let you do anything that can't be done with ports, but they can be used to create a new layer of abstraction.
                                     In the best case scenario, that higher layer of abstraction completely hides the previous layer of abstraction while reducing the exposed surface area.
                                     That decouples higher layers of abstraction from lower layers, such that you can completely replace the lower layers without changing the higher layers.
@@ -84,9 +79,10 @@
                                 <p>
                                     I think it's helpful to maintain a mental model where different objects have different visual metaphors.
                                     Typically I think of message objects as something physical, like a package, and I think of service objects as something abstract, like the mail system.
-                                    A programming joke that I've heard, paraphrased: "If you ask for a banana, you'll get a monkey that has a banana in one hand and a forest in the other."
-                                    Sometimes it's surprisingly hard not to write software that way, but I do believe that it can be avoided.
-                                    Hopefully some of these ideas are a step in that direction.
+                                    A programming joke that I've heard, paraphrased: "If somebody asks for a banana, don't give them a monkey that has a banana in one hand and a forest in the other."
+                                </p>
+                                <p>
+                                    This probably isn't an exhaustive taxonomy of objects-that-have-reasonable-semantics, but hopefully it's a step in that general direction.
                                 </p>
                     <h2>Anatomy of a Software Component</h2>
                         <h3>Public Specification</h3>
