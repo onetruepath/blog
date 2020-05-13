@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>One True Path</title>
+        <link href="0.css" rel="stylesheet">
+    </head>
+    <body>
+        <main>
+            <article>
+                <h1>Unhappy Paths</h1>
+                    <h2>Error Handling</h2>
+                        <p>
+                            If you want to support error handling, then the semantics should be enforced by the static type system.
+                            That usually means returning some kind of tagged union that the static type system understands.
+                            This should make it impossible to use the returned value without specifying what to do if there's an error.
+                        </p>
+                        <p>
+                            If you don't want to support error handling, then you shouldn't allow it at all.
+                            That usually means throwing an undocumented exception that isn't part of the method's contract.
+                            This should make it possible to refactor the code or fix bugs without a breaking change.
+                        </p>
+                        <p>
+                            Error handling should probably be supported for IO and parsing, because that kind of logic tends to fail even if the code is correct.
+                            But error handling probably shouldn't be supported for bugs (e.g. failure to comply with preconditions or postconditions).
+                            Bugs tend to put the process into an undefined state that can only be addressed by killing the process.
+                        </p>
+            </article>
+        </main>
+    </body>
+</html>
