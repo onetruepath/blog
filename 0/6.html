@@ -9,54 +9,41 @@
     <body>
         <main>
             <article>
-                <h1>The Status Quo is Underspecified</h1>
-                    <h2>Filesystem Paths</h2>
-                        <p>
-                            What is a filesystem path on Linux?
-                            (This question is even more painful on Windows.)
-                            It's tempting to believe that it's a list of strings (the path components) encoded as a single string (by using '/' as a delimiter).
-                            This is wrong.
-                        </p>
 
-                        <p>
-                            First, a path is not a UTF-8 encoded string.
-                            Many bytestrings that are valid as UTF-8 encoded strings are not valid as filesystem paths,
-                            and many bytestrings that are valid as filesystem paths are not valid as UTF-8 encoded strings.
-                            Any software that assumes otherwise is broken.
-                        </p>
 
-                        <p>
-                            Second, a path is not (just) an ISO-8859-1 encoded string.
-                            Many bytestrings that are valid as ISO-8859-1 encoded strings are not valid as filesystem paths.
-                            Any software that assumes otherwise is broken.
-                        </p>
+                <h1>Filesystem Paths Are Underspecified</h1>
 
-                        <p>
-                            You could argue that a path is an ISO-8859-1 encoded string-that-doesn't-contain-the-null-character, but that's not a standard interpretation.
-                        </p>
 
-                        <p>
-                            Third, even if you interpret a path as an ISO-8859-1 encoded string-that-doesn't-contain-the-null-character, a path component still isn't (just) a string.
-                            At best, it's a string-that-doesn't-contain-the-null-character-or-the-slash-character.
-                            Any software that assumes otherwise is broken.
-                        </p>
+                <p>
+                    What is a filesystem path on Linux?
+                    (This question is even more painful on Windows.)
+                    It's tempting to believe that it's a list of strings (the path components) encoded as a single string (by using '/' as a delimiter).
+                    This is wrong.
+                </p> <p>
+                    First, a path is not a UTF-8 encoded string.
+                    Many bytestrings that are valid as UTF-8 encoded strings are not valid as filesystem paths,
+                    and many bytestrings that are valid as filesystem paths are not valid as UTF-8 encoded strings.
+                </p> <p>
+                    Second, a path is not (just) an ISO-8859-1 encoded string.
+                    Many bytestrings that are valid as ISO-8859-1 encoded strings are not valid as filesystem paths.
+                </p> <p>
+                    You could argue that a path is an ISO-8859-1 encoded string-that-doesn't-contain-the-null-character, but that's not a standard interpretation.
+                </p> <p>
+                    Third, even if you interpret a path as an ISO-8859-1 encoded string-that-doesn't-contain-the-null-character, a path component still isn't (just) a string.
+                    At best, it's a string-that-doesn't-contain-the-null-character-or-the-slash-character.
+                </p> <p>
+                    Fourth, a path is not (just) a bytestring.
+                    At best, you can say that it is a bytestring-that-doesn't-contain-0x00.
+                </p> <p>
+                    Fifth, even if you interpret a path as a bytestring-that-doesn't-contain-0x00, a path component still isn't (just) a bytestring.
+                    At best, you can say it is a bytestring-that-doesn't-contain-0x00-or-0x2F.
+                </p> <p>
+                    So where does that leave us?
+                    I think we're forced to define a filesystem path as a list of bytestrings-that-don't-contain-0x00-or-0x2F,
+                    encoded as a single bytestring-that-doesn't-contain-0x00 (by using 0x2F as a delimiter and appending 0x00 as a sentinel).
+                </p>
 
-                        <p>
-                            Fourth, a path is not (just) a bytestring.
-                            At best, you can say that it is a bytestring-that-doesn't-contain-0x00.
-                            Any software that assumes otherwise is broken.
-                        </p>
 
-                        <p>
-                            Fifth, even if you interpret a path as a bytestring-that-doesn't-contain-0x00, a path component still isn't (just) a bytestring.
-                            At best, you can say it is a bytestring-that-doesn't-contain-0x00-or-0x2f.
-                            Any software that assumes otherwise is broken.
-                        </p>
-                        <p>
-                            So where does that leave us?
-                            I think we're forced to define a filesystem path as a list of bytestrings-that-don't-contain-0x00-or-0x2f,
-                            encoded as a single bytestring-that-doesn't-contain-0x00 (by using 0x2f as a delimiter and appending 0x00 as a sentinel).
-                        </p>
             </article>
         </main>
     </body>

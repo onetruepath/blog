@@ -9,77 +9,84 @@
     <body>
         <main>
             <article>
-                <h1>The Byte Order Mark</h1>
-                    <h2>Context</h2>
-                        <p>
-                            Unicode is (or should be) a standard for encoding lines of text using sequences of codepoints.
-                            UTF-8 (and also UTF-16, etc.) is a standard for encoding sequences of codepoints using sequences of bytes.
-                            When combined, these can be used to encode lines of text using sequences of bytes.
-                            They cannot be used to encode multiple lines of text in a single sequence of bytes without additional assumptions about e.g. the "End Of Line" encoding.
-                        </p>
-                    <h2>Idealism</h2>
-                        <p>
-                            U+FEFF ZERO WIDTH NO-BREAK SPACE is a Unicode codepoint that has two possible uses.
-                            The first use, as a zero-width no-break space, is deprecated (but still valid).
-                            The second use, as a byte order mark, is not deprecated.
-                        </p>
-                        <p>
-                            The first thing to note here is that U+FEFF is ambiguous at the beginning of a file.
-                            It could be a byte order mark (i.e. part of the file encoding) or it could be a zero-width no-break space (i.e. part of the file content).
-                            Using this codepoint as a zero-width no-break space is now discouraged, but that doesn't actually eliminate the ambiguity when reading a file.
-                            You need to make assumptions about the file format to eliminate that ambiguity, but at that point you (should) already know the byte order.
-                        </p>
-                        <p>
-                            The second thing to note here is that U+FEFF has no value whatsoever when encoding lines of text as sequences of codepoints.
-                            If it has value at all, then it has value only because it lets you infer something about how sequences of codepoints are encoded as sequences of bytes.
-                            That's a completely different layer of abstraction, and therefore outside the appropriate scope of the Unicode standard.
-                        </p>
-                        <p>
-                            The third thing to note here is that U+FEFF does not let you infer anything about how sequences of codepoints are encoded as sequences of bytes.
-                            There are two reasons for this.
-                            First, anyone can invent new rules for encoding sequences of codepoints as sequences of bytes (e.g. "UTF-16 Mostly-Big-Endian-But-With-Two-Exceptions").
-                            Second, U+FFFE is a valid codepoint, so even in the bizarre scenario where UTF-16 is known but the byte order isn't, you still haven't learned anything.
-                            (If this seems wrong, that's probably because U+FFFE is a noncharacter. But noncharacters are, in fact, valid codepoints. Yes, this is weird.)
-                        </p>
-                        <p>
-                            My conclusion is that U+FEFF ZERO WIDTH NO-BREAK SPACE should not exist.
-                        </p>
-                    <h2>Pragmatism</h2>
-                        <p>
-                            There exists a nameless, informally-specified, and ambiguous "file format" typically associated with the "txt" filename extension.
-                            We can't realistically convince people to stop using it, so what do we do?
-                        </p>
-                        <p>
-                            One answer is that we should invent a new file format which can use UTF-8, UTF-16BE, UTF-16LE, UTF-32, or ASCII depending on the first few bytes.
-                            A distinct binary prefix can be used for each non-ASCII possibility, and the prefixes can be chosen such that they won't be present in valid ASCII files.
-                            And why not have the four distinct binary prefixes map to the same codepoint, using their associated encoding schemes?
-                            The Unicode standard defined U+FEFF ZERO WIDTH NO-BREAK SPACE for exactly this purpose, so we might as well use it, right?
-                        </p>
-                        <p>
-                            The first problem is that mapping the four binary prefixes to a single codepoint provides no benefit whatsoever.
-                            We can't possibly interpret them as a codepoint until we infer the encoding scheme, but at that point the prefix is no longer useful.
-                            Why pretend that the prefixes represent a codepoint when they clearly don't?
-                            That just obfuscates the actual abstraction boundaries.
-                        </p>
-                        <p>
-                            The second problem is that people were dumping UTF-8 bytestreams to disk before the ink was dry on the relevant specification, and they weren't using a prefix.
-                            Are we going to reject those files as malformed ASCII when we write our libraries?
-                            Are we going to assume they're actually ISO-8859-1, or Windows-1252, or some other legacy encoding?
-                            Maybe that could have made sense, historically, if we couldn't predict that UTF-8 would take over the world.
-                            But it definitely doesn't make sense anymore.
-                        </p>
-                        <p>
-                            The third problem is that UTF-8 took over the world, and UTF-8 says that one of those binary prefixes looks exactly like a valid codepoint.
-                            Now anyone who wants to parse a text file needs to figure out if the first few bytes represent a binary prefix or an actual codepoint.
-                            In other words, they need to infer the file format, but they can't, which is basically the same issue that we started with.
-                            (Mapping the binary prefixes to a codepoint for no reason isn't as harmless as it seems, apparently.)
-                        </p>
-                        <p>
-                            My conclusion is that U+FEFF ZERO WIDTH NO-BREAK SPACE should never be used if it can possibly be avoided.
-                            We probably need to tolerate it when reading text files, at least for now, but it should be understood that writing it to disk is fundamentally unreasonable.
-                            Sometimes we need to do unreasonable things, when we interact with existing software that is itself unreasonable, but often we can fix the existing software.
-                            And the first step in that process is recognizing what is, in fact, unreasonable.
-                        </p>
+
+
+                <h1>Some Thoughts About The Byte Order Mark</h1>
+
+
+                <h2>Context</h2>
+
+
+                <p>
+                    Unicode is (or should be) a standard for encoding lines of text using sequences of codepoints.
+                    UTF-8 (and also UTF-16, etc.) is a standard for encoding sequences of codepoints using sequences of bytes.
+                    When combined, these can be used to encode lines of text using sequences of bytes.
+                    They cannot be used to encode multiple lines of text in a single sequence of bytes without additional assumptions about e.g. the "End Of Line" encoding.
+                </p>
+
+
+                <h2>In Theory</h2>
+
+
+                <p>
+                    U+FEFF ZERO WIDTH NO-BREAK SPACE is a Unicode codepoint that has two possible uses.
+                    The first use, as a zero-width no-break space, is deprecated (but still valid).
+                    The second use, as a byte order mark, is not deprecated.
+                </p> <p>
+                    The first thing to note here is that U+FEFF is ambiguous at the beginning of a file.
+                    It could be a byte order mark (i.e. part of the file encoding) or it could be a zero-width no-break space (i.e. part of the file content).
+                    Using this codepoint as a zero-width no-break space is now discouraged, but that doesn't actually eliminate the ambiguity when reading a file.
+                    You need to make assumptions about the file format to eliminate that ambiguity, but at that point you (should) already know the byte order.
+                </p> <p>
+                    The second thing to note here is that U+FEFF has no value whatsoever when encoding lines of text as sequences of codepoints.
+                    If it has value at all, then it has value only because it lets you infer something about how sequences of codepoints are encoded as sequences of bytes.
+                    That's a completely different layer of abstraction, and therefore outside the appropriate scope of the Unicode standard.
+                </p> <p>
+                    The third thing to note here is that U+FEFF does not let you infer anything about how sequences of codepoints are encoded as sequences of bytes.
+                    There are two reasons for this.
+                    First, anyone can invent new rules for encoding sequences of codepoints as sequences of bytes (e.g. "UTF-16 Mostly-Big-Endian-But-With-Two-Exceptions").
+                    Second, U+FFFE is a valid codepoint, so even in the bizarre scenario where UTF-16 is known but the byte order isn't, you still haven't learned anything.
+                    (If this seems wrong, that's probably because U+FFFE is a noncharacter. But noncharacters are, in fact, valid codepoints. Yes, this is weird.)
+                </p> <p>
+                    My conclusion is that U+FEFF ZERO WIDTH NO-BREAK SPACE should not exist.
+                </p>
+
+
+                <h2>In Practice</h2>
+
+
+                <p>
+                    There exists a nameless, informally-specified, and ambiguous "file format" typically associated with the "txt" filename extension.
+                    We can't realistically convince people to stop using it, so what do we do?
+                </p> <p>
+                    One answer is that we should invent a new file format which can use UTF-8, UTF-16BE, UTF-16LE, UTF-32, or ASCII depending on the first few bytes.
+                    A distinct binary prefix can be used for each non-ASCII possibility, and the prefixes can be chosen such that they won't be present in valid ASCII files.
+                    And why not have the four distinct binary prefixes map to the same codepoint, using their associated encoding schemes?
+                    The Unicode standard defined U+FEFF ZERO WIDTH NO-BREAK SPACE for exactly this purpose, so we might as well use it, right?
+                </p> <p>
+                    The first problem is that mapping the four binary prefixes to a single codepoint provides no benefit whatsoever.
+                    We can't possibly interpret them as a codepoint until we infer the encoding scheme, but at that point the prefix is no longer useful.
+                    Why pretend that the prefixes represent a codepoint when they clearly don't?
+                    That just obfuscates the actual abstraction boundaries.
+                </p> <p>
+                    The second problem is that people were dumping UTF-8 bytestreams to disk before the ink was dry on the relevant specification, and they weren't using a prefix.
+                    Are we going to reject those files as malformed ASCII when we write our libraries?
+                    Are we going to assume they're actually ISO-8859-1, or Windows-1252, or some other legacy encoding?
+                    Maybe that could have made sense, historically, if we couldn't predict that UTF-8 would take over the world.
+                    But it definitely doesn't make sense anymore.
+                </p> <p>
+                    The third problem is that UTF-8 took over the world, and UTF-8 says that one of those binary prefixes looks exactly like a valid codepoint.
+                    Now anyone who wants to parse a text file needs to figure out if the first few bytes represent a binary prefix or an actual codepoint.
+                    In other words, they need to infer the file format, but they can't, which is basically the same issue that we started with.
+                    (Mapping the binary prefixes to a codepoint for no reason isn't as harmless as it seems, apparently.)
+                </p> <p>
+                    My conclusion is that U+FEFF ZERO WIDTH NO-BREAK SPACE should never be used if it can possibly be avoided.
+                    We probably need to tolerate it when reading text files, at least for now, but it should be understood that writing it to disk is fundamentally unreasonable.
+                    Sometimes we need to do unreasonable things, when we interact with existing software that is itself unreasonable, but often we can fix the existing software.
+                    And the first step in that process is recognizing what is, in fact, unreasonable.
+                </p>
+
+
             </article>
         </main>
     </body>

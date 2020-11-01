@@ -9,109 +9,159 @@
     <body>
         <main>
             <article>
-                <h1>Pretending to Understand Software Architecture</h1>
-                    <h2>Object-Oriented Semantics</h2>
-                        <h3>Objects</h3>
-                            <ul>
-                                <li>Objects can't be created with an invalid state.</li>
-                            </ul>
-                        <h3>Message Objects</h3>
-                            <ul>
-                                <li>Message objects are objects.</li>
-                                <li>They're always immutable.</li>
-                                <li>They can't expose methods that have impure preconditions.</li>
-                                <li>They can't expose methods that have impure postconditions.</li>
-                                <li>They can't send messages to service objects.</li>
-                            </ul>
-                        <h3>Value Objects</h3>
-                            <ul>
-                                <li>Value objects are message objects.</li>
-                                <li>They always comply with some set of value constraints.</li>
-                                <li>Inheritance is used primarily to add additional value constraints.</li>
-                            </ul>
-                        <h3>Record Objects</h3>
-                            <ul>
-                                <li>Record objects are message objects.</li>
-                                <li>They always expose some set of properties.</li>
-                                <li>Inheritance is used primarily to add additional properties.</li>
-                            </ul>
-                        <h3>Service Objects</h3>
-                            <ul>
-                                <li>Service objects are objects.</li>
-                                <li>They can expose methods that have impure preconditions.</li>
-                                <li>They can expose methods that have impure postconditions.</li>
-                                <li>They can send messages to service objects.</li>
-                            </ul>
-                        <h3>Ports</h3>
-                            <ul>
-                                <li>Ports are service objects.</li>
-                                <li>They can send messages directly to the host environment.</li>
-                            </ul>
-                        <h3>Adapters</h3>
-                            <ul>
-                                <li>Adapters are service objects.</li>
-                                <li>They can't send messages directly to the host environment.</li>
-                            </ul>
-                        <h3>Comments</h3>
-                                <p>
-                                    The properties of a record object are usually orthogonal to each other, meaning that you can't infer anything about the value of one property based on the value of another.
-                                    I suppose they're basically vectors, and reading a property is basically projecting the vector into a single dimension.
-                                </p>
-                                <p>
-                                    Service objects are usually (always?) immutable.
-                                    Often they're stateless, but sometimes they hold a configuration.
-                                    The configuration constrains the set of interfaces that the service object can reasonably implement.
-                                    A configuration that exposes more properties can generally be used to implement more interfaces.
-                                </p>
-                                <p>
-                                    Most service objects implement an interface, and most interfaces define a protocol for communicating with service objects.
-                                    I suppose it sometimes makes sense to define an interface for communicating with message objects, but that's the exception and not the rule.
-                                </p>
-                                <p>
-                                    Service objects typically control access to an external system that is both stateful and mutable.
-                                    I suspect that all of the methods exposed by those objects should be (a) idempotent and (b) transactional.
-                                </p>
-                                <p>
-                                    Adapters don't let you do anything that can't be done with ports, but they can be used to create a new layer of abstraction.
-                                    In the best case scenario, that higher layer of abstraction completely hides the previous layer of abstraction while reducing the exposed surface area.
-                                    That decouples higher layers of abstraction from lower layers, such that you can completely replace the lower layers without changing the higher layers.
-                                </p>
-                                <p>
-                                    I think it's helpful to maintain a mental model where different objects have different visual metaphors.
-                                    Typically I think of message objects as something physical, like a package, and I think of service objects as something abstract, like the mail system.
-                                    A programming joke that I've heard, paraphrased: "If somebody asks for a banana, don't give them a monkey that has a banana in one hand and a forest in the other."
-                                </p>
-                                <p>
-                                    This probably isn't an exhaustive taxonomy of objects-that-have-reasonable-semantics, but hopefully it's a step in that general direction.
-                                </p>
-                    <h2>Anatomy of a Software Component</h2>
-                        <h3>Public Specification</h3>
-                            <ul>
-                                <li>The public specification defines message objects and service interfaces.</li>
-                                <li>It does not define service objects.</li>
-                                <li>It does not depend on the internal specification, the internal implementation, or the public implementation.</li>
-                                <li>Every type that it defines has public visibility.</li>
-                            </ul>
-                        <h3>Internal Specification</h3>
-                            <ul>
-                                <li>The internal specification defines message objects and service interfaces.</li>
-                                <li>It does not define service objects.</li>
-                                <li>It does not depend on the internal implementation or the public implementation.</li>
-                                <li>Every type that it defines has internal visibility.</li>
-                            </ul>
-                        <h3>Internal Implementation</h3>
-                            <ul>
-                                <li>The internal implementation defines service objects.</li>
-                                <li>It does not define message objects or service interfaces.</li>
-                                <li>It does not depend on the public implementation.</li>
-                                <li>Every type that it defines has internal visibility.</li>
-                            </ul>
-                        <h3>Public Implementation</h3>
-                            <ul>
-                                <li>The public implementation defines service objects.</li>
-                                <li>It does not define message objects or service interfaces.</li>
-                                <li>Every type that it defines has public visibility.</li>
-                            </ul>
+
+
+                <h1>Some Thoughts About Software Architecture</h1>
+
+
+                <h2>Object-Oriented Semantics</h2>
+
+
+                <h3>Objects</h3>
+
+
+                <ul>
+                    <li>Objects can't be created with an invalid state.</li>
+                </ul>
+
+
+                <h3>Message Objects</h3>
+
+
+                <ul>
+                    <li>Message objects are objects.</li>
+                    <li>They're always immutable.</li>
+                    <li>They can't expose methods that have impure preconditions.</li>
+                    <li>They can't expose methods that have impure postconditions.</li>
+                    <li>They can't send messages to service objects.</li>
+                </ul>
+
+
+                <h3>Value Objects</h3>
+
+
+                <ul>
+                    <li>Value objects are message objects.</li>
+                    <li>They always comply with some set of value constraints.</li>
+                    <li>Inheritance is used primarily to add additional value constraints.</li>
+                </ul>
+
+
+                <h3>Record Objects</h3>
+
+
+                <ul>
+                    <li>Record objects are message objects.</li>
+                    <li>They always expose some set of properties.</li>
+                    <li>Inheritance is used primarily to add additional properties.</li>
+                </ul>
+
+
+                <h3>Service Objects</h3>
+
+
+                <ul>
+                    <li>Service objects are objects.</li>
+                    <li>They can expose methods that have impure preconditions.</li>
+                    <li>They can expose methods that have impure postconditions.</li>
+                    <li>They can send messages to service objects.</li>
+                </ul>
+
+
+                <h3>Ports</h3>
+
+
+                <ul>
+                    <li>Ports are service objects.</li>
+                    <li>They can send messages directly to the host environment.</li>
+                </ul>
+
+
+                <h3>Adapters</h3>
+
+
+                <ul>
+                    <li>Adapters are service objects.</li>
+                    <li>They can't send messages directly to the host environment.</li>
+                </ul>
+
+
+                <h3>Comments</h3>
+
+
+                <p>
+                    The properties of a record object are usually orthogonal to each other, meaning that you can't infer anything about the value of one property based on the value of another.
+                    I suppose they're basically vectors, and reading a property is basically projecting the vector into a single dimension.
+                </p> <p>
+                    Service objects are usually (always?) immutable.
+                    Often they're stateless, but sometimes they hold a configuration.
+                    The configuration constrains the set of interfaces that the service object can reasonably implement.
+                    A configuration that exposes more properties can generally be used to implement more interfaces.
+                </p> <p>
+                    Most service objects implement an interface, and most interfaces define a protocol for communicating with service objects.
+                    I suppose it sometimes makes sense to define an interface for communicating with message objects, but that's the exception and not the rule.
+                </p> <p>
+                    Service objects typically control access to an external system that is both stateful and mutable.
+                    I suspect that all of the methods exposed by those objects should be (a) idempotent and (b) transactional.
+                </p> <p>
+                    Adapters don't let you do anything that can't be done with ports, but they can be used to create a new layer of abstraction.
+                    In the best case scenario, that higher layer of abstraction completely hides the previous layer of abstraction while reducing the exposed surface area.
+                    That decouples higher layers of abstraction from lower layers, such that you can completely replace the lower layers without changing the higher layers.
+                </p> <p>
+                    I think it's helpful to maintain a mental model where different objects have different visual metaphors.
+                    Typically I think of message objects as something physical, like a package, and I think of service objects as something abstract, like the mail system.
+                    A programming joke that I've heard, paraphrased: "If somebody asks for a banana, don't give them a monkey that has a banana in one hand and a forest in the other."
+                </p> <p>
+                    This probably isn't an exhaustive taxonomy of objects-that-have-reasonable-semantics, but hopefully it's a step in that general direction.
+                </p>
+
+
+                <h2>Project Organization</h2>
+
+
+                <h3>Public Specification</h3>
+
+
+                <ul>
+                    <li>The public specification defines message objects and service interfaces.</li>
+                    <li>It does not define service objects.</li>
+                    <li>It does not depend on the internal specification, the internal implementation, or the public implementation.</li>
+                    <li>Every type that it defines has public visibility.</li>
+                </ul>
+
+
+                <h3>Internal Specification</h3>
+
+
+                <ul>
+                    <li>The internal specification defines message objects and service interfaces.</li>
+                    <li>It does not define service objects.</li>
+                    <li>It does not depend on the internal implementation or the public implementation.</li>
+                    <li>Every type that it defines has internal visibility.</li>
+                </ul>
+
+
+                <h3>Internal Implementation</h3>
+
+
+                <ul>
+                    <li>The internal implementation defines service objects.</li>
+                    <li>It does not define message objects or service interfaces.</li>
+                    <li>It does not depend on the public implementation.</li>
+                    <li>Every type that it defines has internal visibility.</li>
+                </ul>
+
+
+                <h3>Public Implementation</h3>
+
+
+                <ul>
+                    <li>The public implementation defines service objects.</li>
+                    <li>It does not define message objects or service interfaces.</li>
+                    <li>Every type that it defines has public visibility.</li>
+                </ul>
+
+
             </article>
         </main>
     </body>

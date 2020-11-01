@@ -9,108 +9,76 @@
     <body>
         <main>
             <article>
-                <h1>The Crimson Hexagon</h1>
-                    <h2>This approach is pretty bad.</h2>
-                        <h3>Identity</h3>
-                            <p>
-                                I'm going to say that e8cf765c-5dbc-416c-8eea-88b1d4796b53 is an identifier for this encoding scheme, in case that's useful for some reason.
-                            </p>
-                        <h3>Overview</h3>
-                            <figure>
-                                <div>
-                                    <table>
-                                        <tr> <th>Number of Bytes</th> <th>Number of Data Bits</th> <th>First Value</th> <th>Last Value</th> <th>1st Byte</th> <th>2nd Byte</th> <th>All Other Bytes</th> </tr>
-                                        <tr> <td>1</td>               <td>6</td>                   <td>0</td>           <td>2^6-1</td>      <td>10xxxxxx</td> <td>N/A</td>      <td>N/A</td>             </tr>
-                                        <tr> <td>y+6</td>             <td>(y+5)*7</td>             <td>2^32</td>        <td>2^252-1</td>    <td>110yyyyy</td> <td>0xxxxxxx</td> <td>0xxxxxxx</td>        </tr>
-                                        <tr> <td>5</td>               <td>32</td>                  <td>2^24</td>        <td>2^32-1</td>     <td>1110xxxx</td> <td>0xxxxxxx</td> <td>0xxxxxxx</td>        </tr>
-                                        <tr> <td>4</td>               <td>24</td>                  <td>2^16</td>        <td>2^24-1</td>     <td>11110xxx</td> <td>0xxxxxxx</td> <td>0xxxxxxx</td>        </tr>
-                                        <tr> <td>3</td>               <td>16</td>                  <td>2^8</td>         <td>2^16-1</td>     <td>111110xx</td> <td>0xxxxxxx</td> <td>0xxxxxxx</td>        </tr>
-                                        <tr> <td>2</td>               <td>8</td>                   <td>2^6</td>         <td>2^8-1</td>      <td>1111110x</td> <td>0xxxxxxx</td> <td>N/A</td>             </tr>
-                                        <tr> <td>38</td>              <td>256</td>                 <td>2^252</td>       <td>2^256-1</td>    <td>11111110</td> <td>0000xxxx</td> <td>0xxxxxxx</td>        </tr>
-                                    </table>
-                                </div>
-                            </figure>
-                        <h3>Details</h3>
-                            <ul>
-                                <li>The more significant bits of an encoded value are stored earlier in the byte stream.</li>
-                                <li>Overlong encodings for a given value are invalid.</li>
-                                <li>Any encoding that contains the byte 0xFF is invalid.</li>
-                            </ul>
-                        <h3>Comments</h3>
-                            <p>
-                                I don't believe that this encoding scheme should be used for anything, but there's an ugly kind of beauty to it.
-                                Some properties that make me sad:
-                            </p>
-                            <ul>
-                                <li>It sometimes uses 11 bytes (70 data bits) to represent a 64 bit integer, even though that could be done using 10 bytes without changing very much.</li>
-                                <li>Binary values in the range [0x40, 0x7e] are encoded using two bytes each, which isn't great if you want to encode UTF-8 byte sequences.</li>
-                                <li>Overlong encodings create regions of invalidity that don't strictly need to exist, since you could map e.g. an overlong zero to some non-zero value.</li>
-                                <li>Some byte sequences aren't valid, so you can't just pull bytes off the wire without validating them.</li>
-                                <li>It sacrifices efficiency by storing metadata in the most significant bit of each byte, and there's arguably no reason to do that at this level of abstraction.</li>
-                            </ul>
-                    <h2>This approach is less bad. Maybe.</h2>
-                        <h3>Identity</h3>
-                            <p>
-                                I'm going to say that a802a05a-5818-44d4-a4e6-c15ff8cd1a75 is an identifier for this encoding scheme, in case that's useful for some reason.
-                            </p>
-                        <h3>Overview</h3>
-                            <figure>
-                                <div>
-                                    <table>
-                                        <tr> <th>Number of Bytes</th> <th>Number of Data Bits</th> <th>First Value</th> <th>Last Value</th> <th>1st Byte</th> <th>2nd Byte</th> <th>All Other Bytes</th> </tr>
-                                        <tr> <td>1</td>               <td>0</td>                   <td>0</td>           <td>0</td>          <td>00000000</td> <td>N/A</td>      <td>N/A</td>             </tr>
-                                        <tr> <td>---</td>             <td>---</td>                 <td>---</td>         <td>---</td>        <td>---</td>      <td>---</td>      <td>---</td>             </tr>
-                                        <tr> <td>0+2</td>             <td>(0*8)+0</td>             <td>2^0</td>         <td>2^1-1</td>      <td>00000001</td> <td>00000000</td> <td>N/A</td>             </tr>
-                                        <tr> <td>0+2</td>             <td>(0*8)+1</td>             <td>2^1</td>         <td>2^2-1</td>      <td>0000001x</td> <td>00000000</td> <td>N/A</td>             </tr>
-                                        <tr> <td>0+2</td>             <td>(0*8)+2</td>             <td>2^2</td>         <td>2^3-1</td>      <td>000001xx</td> <td>00000000</td> <td>N/A</td>             </tr>
-                                        <tr> <td>0+2</td>             <td>(0*8)+3</td>             <td>2^3</td>         <td>2^4-1</td>      <td>00001xxx</td> <td>00000000</td> <td>N/A</td>             </tr>
-                                        <tr> <td>0+2</td>             <td>(0*8)+4</td>             <td>2^4</td>         <td>2^5-1</td>      <td>0001xxxx</td> <td>00000000</td> <td>N/A</td>             </tr>
-                                        <tr> <td>0+2</td>             <td>(0*8)+5</td>             <td>2^5</td>         <td>2^6-1</td>      <td>001xxxxx</td> <td>00000000</td> <td>N/A</td>             </tr>
-                                        <tr> <td>0+2</td>             <td>(0*8)+6</td>             <td>2^6</td>         <td>2^7-1</td>      <td>01xxxxxx</td> <td>00000000</td> <td>N/A</td>             </tr>
-                                        <tr> <td>0+2</td>             <td>(0*8)+7</td>             <td>2^7</td>         <td>2^8-1</td>      <td>1xxxxxxx</td> <td>00000000</td> <td>N/A</td>             </tr>
-                                        <tr> <td>---</td>             <td>---</td>                 <td>---</td>         <td>---</td>        <td>---</td>      <td>---</td>      <td>---</td>             </tr>
-                                        <tr> <td>1+2</td>             <td>(1*8)+0</td>             <td>2^8</td>         <td>2^9-1</td>      <td>00000001</td> <td>00000001</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>1+2</td>             <td>(1*8)+1</td>             <td>2^9</td>         <td>2^10-1</td>     <td>00000001</td> <td>0000001x</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>1+2</td>             <td>(1*8)+2</td>             <td>2^10</td>        <td>2^11-1</td>     <td>00000001</td> <td>000001xx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>1+2</td>             <td>(1*8)+3</td>             <td>2^11</td>        <td>2^12-1</td>     <td>00000001</td> <td>00001xxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>1+2</td>             <td>(1*8)+4</td>             <td>2^12</td>        <td>2^13-1</td>     <td>00000001</td> <td>0001xxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>1+2</td>             <td>(1*8)+5</td>             <td>2^13</td>        <td>2^14-1</td>     <td>00000001</td> <td>001xxxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>1+2</td>             <td>(1*8)+6</td>             <td>2^14</td>        <td>2^15-1</td>     <td>00000001</td> <td>01xxxxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>1+2</td>             <td>(1*8)+7</td>             <td>2^15</td>        <td>2^16-1</td>     <td>00000001</td> <td>1xxxxxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>---</td>             <td>---</td>                 <td>---</td>         <td>---</td>        <td>---</td>      <td>---</td>      <td>---</td>             </tr>
-                                        <tr> <td>2+2</td>             <td>(2*8)+0</td>             <td>2^16</td>        <td>2^17-1</td>     <td>00000010</td> <td>00000001</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>2+2</td>             <td>(2*8)+1</td>             <td>2^17</td>        <td>2^18-1</td>     <td>00000010</td> <td>0000001x</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>2+2</td>             <td>(2*8)+2</td>             <td>2^18</td>        <td>2^19-1</td>     <td>00000010</td> <td>000001xx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>2+2</td>             <td>(2*8)+3</td>             <td>2^19</td>        <td>2^20-1</td>     <td>00000010</td> <td>00001xxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>2+2</td>             <td>(2*8)+4</td>             <td>2^20</td>        <td>2^21-1</td>     <td>00000010</td> <td>0001xxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>2+2</td>             <td>(2*8)+5</td>             <td>2^21</td>        <td>2^22-1</td>     <td>00000010</td> <td>001xxxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>2+2</td>             <td>(2*8)+6</td>             <td>2^22</td>        <td>2^23-1</td>     <td>00000010</td> <td>01xxxxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>2+2</td>             <td>(2*8)+7</td>             <td>2^23</td>        <td>2^24-1</td>     <td>00000010</td> <td>1xxxxxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>...</td>             <td>...</td>                 <td>...</td>         <td>...</td>        <td>...</td>      <td>...</td>      <td>...</td>             </tr>
-                                        <tr> <td>255+2</td>           <td>(255*8)+0</td>           <td>2^2040</td>      <td>2^2041-1</td>   <td>11111111</td> <td>00000001</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>255+2</td>           <td>(255*8)+1</td>           <td>2^2041</td>      <td>2^2042-1</td>   <td>11111111</td> <td>0000001x</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>255+2</td>           <td>(255*8)+2</td>           <td>2^2042</td>      <td>2^2043-1</td>   <td>11111111</td> <td>000001xx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>255+2</td>           <td>(255*8)+3</td>           <td>2^2043</td>      <td>2^2044-1</td>   <td>11111111</td> <td>00001xxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>255+2</td>           <td>(255*8)+4</td>           <td>2^2044</td>      <td>2^2045-1</td>   <td>11111111</td> <td>0001xxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>255+2</td>           <td>(255*8)+5</td>           <td>2^2045</td>      <td>2^2046-1</td>   <td>11111111</td> <td>001xxxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>255+2</td>           <td>(255*8)+6</td>           <td>2^2046</td>      <td>2^2047-1</td>   <td>11111111</td> <td>01xxxxxx</td> <td>xxxxxxxx</td>        </tr>
-                                        <tr> <td>255+2</td>           <td>(255*8)+7</td>           <td>2^2047</td>      <td>2^2048-1</td>   <td>11111111</td> <td>1xxxxxxx</td> <td>xxxxxxxx</td>        </tr>
-                                    </table>
-                                </div>
-                            </figure>
-                        <h3>Comments</h3>
-                            <p>
-                                This encoding scheme is mostly just big-endian with an 8-bit length prefix, but there's at least one difference.
-                                Specifically: Most single-byte values are encoded by adding a trailing null byte, not an 8-bit length prefix.
-                                That makes overlong encodings impossible, and it frees up one possible value from the length prefix.
-                                We could use that extra value to encode larger numbers, but it's probably better if we can't encode values in the range [2^2048, 2^2056-1].
-                                Since the extra value isn't otherwise useful, we simply allow 0x00 to be encoded as a single byte.
-                            </p>
-                            <p>
-                                You could actually modify this encoding such that other values in the range [0x00, 0xff] are encoded using a single byte.
-                                If you encoded values in the range [0x00, 0x80] using a single byte, then latin text (and many text-based file formats) could be encoded more efficiently.
-                                I believe that 2^1024-1 is the largest value that could be encoded, in that case.
-                            </p>
+
+
+                <h1>An Encoding Scheme For 256 Bit Integers</h1>
+
+
+                <h2>Overview</h2>
+
+
+                <figure>
+                    <div>
+                        <table>
+                            <tr> <th>Number of Bytes</th> <th>Number of Data Bits</th> <th>First Value</th> <th>Last Value</th> <th>1st Byte</th> <th>2nd Byte</th> <th>All Other Bytes</th> </tr>
+                            <tr> <td>1</td>               <td>0</td>                   <td>0</td>           <td>0</td>          <td>00000000</td> <td>N/A</td>      <td>N/A</td>             </tr>
+                            <tr> <td>---</td>             <td>---</td>                 <td>---</td>         <td>---</td>        <td>---</td>      <td>---</td>      <td>---</td>             </tr>
+                            <tr> <td>0+2</td>             <td>(0*8)+0</td>             <td>2^0</td>         <td>2^1-1</td>      <td>00000001</td> <td>00000000</td> <td>N/A</td>             </tr>
+                            <tr> <td>0+2</td>             <td>(0*8)+1</td>             <td>2^1</td>         <td>2^2-1</td>      <td>0000001x</td> <td>00000000</td> <td>N/A</td>             </tr>
+                            <tr> <td>0+2</td>             <td>(0*8)+2</td>             <td>2^2</td>         <td>2^3-1</td>      <td>000001xx</td> <td>00000000</td> <td>N/A</td>             </tr>
+                            <tr> <td>0+2</td>             <td>(0*8)+3</td>             <td>2^3</td>         <td>2^4-1</td>      <td>00001xxx</td> <td>00000000</td> <td>N/A</td>             </tr>
+                            <tr> <td>0+2</td>             <td>(0*8)+4</td>             <td>2^4</td>         <td>2^5-1</td>      <td>0001xxxx</td> <td>00000000</td> <td>N/A</td>             </tr>
+                            <tr> <td>0+2</td>             <td>(0*8)+5</td>             <td>2^5</td>         <td>2^6-1</td>      <td>001xxxxx</td> <td>00000000</td> <td>N/A</td>             </tr>
+                            <tr> <td>0+2</td>             <td>(0*8)+6</td>             <td>2^6</td>         <td>2^7-1</td>      <td>01xxxxxx</td> <td>00000000</td> <td>N/A</td>             </tr>
+                            <tr> <td>0+2</td>             <td>(0*8)+7</td>             <td>2^7</td>         <td>2^8-1</td>      <td>1xxxxxxx</td> <td>00000000</td> <td>N/A</td>             </tr>
+                            <tr> <td>---</td>             <td>---</td>                 <td>---</td>         <td>---</td>        <td>---</td>      <td>---</td>      <td>---</td>             </tr>
+                            <tr> <td>1+2</td>             <td>(1*8)+0</td>             <td>2^8</td>         <td>2^9-1</td>      <td>00000001</td> <td>00000001</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>1+2</td>             <td>(1*8)+1</td>             <td>2^9</td>         <td>2^10-1</td>     <td>00000001</td> <td>0000001x</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>1+2</td>             <td>(1*8)+2</td>             <td>2^10</td>        <td>2^11-1</td>     <td>00000001</td> <td>000001xx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>1+2</td>             <td>(1*8)+3</td>             <td>2^11</td>        <td>2^12-1</td>     <td>00000001</td> <td>00001xxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>1+2</td>             <td>(1*8)+4</td>             <td>2^12</td>        <td>2^13-1</td>     <td>00000001</td> <td>0001xxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>1+2</td>             <td>(1*8)+5</td>             <td>2^13</td>        <td>2^14-1</td>     <td>00000001</td> <td>001xxxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>1+2</td>             <td>(1*8)+6</td>             <td>2^14</td>        <td>2^15-1</td>     <td>00000001</td> <td>01xxxxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>1+2</td>             <td>(1*8)+7</td>             <td>2^15</td>        <td>2^16-1</td>     <td>00000001</td> <td>1xxxxxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>---</td>             <td>---</td>                 <td>---</td>         <td>---</td>        <td>---</td>      <td>---</td>      <td>---</td>             </tr>
+                            <tr> <td>2+2</td>             <td>(2*8)+0</td>             <td>2^16</td>        <td>2^17-1</td>     <td>00000010</td> <td>00000001</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>2+2</td>             <td>(2*8)+1</td>             <td>2^17</td>        <td>2^18-1</td>     <td>00000010</td> <td>0000001x</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>2+2</td>             <td>(2*8)+2</td>             <td>2^18</td>        <td>2^19-1</td>     <td>00000010</td> <td>000001xx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>2+2</td>             <td>(2*8)+3</td>             <td>2^19</td>        <td>2^20-1</td>     <td>00000010</td> <td>00001xxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>2+2</td>             <td>(2*8)+4</td>             <td>2^20</td>        <td>2^21-1</td>     <td>00000010</td> <td>0001xxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>2+2</td>             <td>(2*8)+5</td>             <td>2^21</td>        <td>2^22-1</td>     <td>00000010</td> <td>001xxxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>2+2</td>             <td>(2*8)+6</td>             <td>2^22</td>        <td>2^23-1</td>     <td>00000010</td> <td>01xxxxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>2+2</td>             <td>(2*8)+7</td>             <td>2^23</td>        <td>2^24-1</td>     <td>00000010</td> <td>1xxxxxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>...</td>             <td>...</td>                 <td>...</td>         <td>...</td>        <td>...</td>      <td>...</td>      <td>...</td>             </tr>
+                            <tr> <td>255+2</td>           <td>(255*8)+0</td>           <td>2^2040</td>      <td>2^2041-1</td>   <td>11111111</td> <td>00000001</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>255+2</td>           <td>(255*8)+1</td>           <td>2^2041</td>      <td>2^2042-1</td>   <td>11111111</td> <td>0000001x</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>255+2</td>           <td>(255*8)+2</td>           <td>2^2042</td>      <td>2^2043-1</td>   <td>11111111</td> <td>000001xx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>255+2</td>           <td>(255*8)+3</td>           <td>2^2043</td>      <td>2^2044-1</td>   <td>11111111</td> <td>00001xxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>255+2</td>           <td>(255*8)+4</td>           <td>2^2044</td>      <td>2^2045-1</td>   <td>11111111</td> <td>0001xxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>255+2</td>           <td>(255*8)+5</td>           <td>2^2045</td>      <td>2^2046-1</td>   <td>11111111</td> <td>001xxxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>255+2</td>           <td>(255*8)+6</td>           <td>2^2046</td>      <td>2^2047-1</td>   <td>11111111</td> <td>01xxxxxx</td> <td>xxxxxxxx</td>        </tr>
+                            <tr> <td>255+2</td>           <td>(255*8)+7</td>           <td>2^2047</td>      <td>2^2048-1</td>   <td>11111111</td> <td>1xxxxxxx</td> <td>xxxxxxxx</td>        </tr>
+                        </table>
+                    </div>
+                </figure>
+
+
+                <h3>Comments</h3>
+
+
+                <p>
+                    This encoding scheme is mostly just big-endian with an 8-bit length prefix, but there's at least one difference.
+                    Specifically: Most single-byte values are encoded by adding a trailing null byte, not an 8-bit length prefix.
+                    That makes overlong encodings impossible, and it frees up one possible value from the length prefix.
+                    We could use that extra value to encode larger numbers, but it's probably better if we can't encode values in the range [2^2048, 2^2056-1].
+                    Since the extra value isn't otherwise useful, we simply allow 0x00 to be encoded as a single byte.
+                </p> <p>
+                    You could actually modify this encoding such that other values in the range [0x00, 0xFF] are encoded using a single byte.
+                    If you encoded values in the range [0x00, 0x80] using a single byte, then latin text (and many text-based file formats) could be encoded more efficiently.
+                    I believe that 2^1024-1 is the largest value that could be encoded, in that case.
+                </p>
+
+
             </article>
         </main>
     </body>
