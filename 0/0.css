@@ -22,7 +22,7 @@ pre, figcaption, li   { margin: 0; }
 body                   { border: 1px solid #222222; }
 header, main, footer   { border: 1px solid #222222; }
 article                { border: 1px solid #222222; }
-figure                 { border: 1px solid #222222; }
+figure                 { border: 2px solid #222222; }
 table, th, td          { border: 1px solid #222222; }
 
 *                    { padding: 0; }
@@ -34,14 +34,14 @@ figure > figcaption  { padding: 1px 1em; }
 th, td               { padding: 1px 1em; }
 
 html                 { background-color: #111111; }
-body                 { background-color: #bbbbbb; }
-header, main, footer { background-color: #cccccc; }
-article, nav         { background-color: #dddddd; }
-figure > div         { background-color: #eeeeee; }
-figure > figcaption  { background-color: #222222; }
+body                 { background-color: #ffffff; }
+header, main, footer { background-color: #ffffff; }
+article, nav         { background-color: #ffffff; }
+figure > div         { background-color: #ffffff; }
+figure > figcaption  { background-color: #444444; }
 
-body                { color: #222222; }
-figcaption          { color: #eeeeee; }
+body                { color: #444444; }
+figcaption          { color: #ffffff; }
 a:link              { color: #0000ee; }
 a:visited           { color: #551a8b; }
 
