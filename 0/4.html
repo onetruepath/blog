@@ -33,7 +33,6 @@
                     <li>They're always immutable.</li>
                     <li>They can't expose methods that have impure preconditions.</li>
                     <li>They can't expose methods that have impure postconditions.</li>
-                    <li>They can't send messages to service objects.</li>
                 </ul>
 
 
@@ -64,7 +63,6 @@
                     <li>Service objects are objects.</li>
                     <li>They can expose methods that have impure preconditions.</li>
                     <li>They can expose methods that have impure postconditions.</li>
-                    <li>They can send messages to service objects.</li>
                 </ul>
 
 
@@ -90,19 +88,20 @@
 
 
                 <p>
-                    The properties of a record object are usually orthogonal to each other, meaning that you can't infer anything about the value of one property based on the value of another.
-                    I suppose they're basically vectors, and reading a property is basically projecting the vector into a single dimension.
+                    The properties of a record object should be orthogonal to each other, meaning that you can't infer anything about the value of one property based on the value of another.
+                    Otherwise there's a risk of inconsistency, and you need to go out of your way to validate the relevant invariants.
                 </p> <p>
                     Service objects are usually (always?) immutable.
                     Often they're stateless, but sometimes they hold a configuration.
                     The configuration constrains the set of interfaces that the service object can reasonably implement.
                     A configuration that exposes more properties can generally be used to implement more interfaces.
+                    A configuration that exposes value objects with relatively strict value constraints can generally be used to implement relatively strict interfaces.
                 </p> <p>
                     Most service objects implement an interface, and most interfaces define a protocol for communicating with service objects.
-                    I suppose it sometimes makes sense to define an interface for communicating with message objects, but that's the exception and not the rule.
+                    It may sometimes be useful to define an interface for communicating with message objects, but even if that's the case, it's the exception and not the rule.
                 </p> <p>
                     Service objects typically control access to an external system that is both stateful and mutable.
-                    I suspect that all of the methods exposed by those objects should be (a) idempotent and (b) transactional.
+                    I suspect that all of the methods exposed by service objects should be (a) idempotent and (b) transactional.
                 </p> <p>
                     Adapters don't let you do anything that can't be done with ports, but they can be used to create a new layer of abstraction.
                     In the best case scenario, that higher layer of abstraction completely hides the previous layer of abstraction while reducing the exposed surface area.
@@ -159,6 +158,18 @@
                     <li>The public implementation defines service objects.</li>
                     <li>It does not define message objects or service interfaces.</li>
                     <li>Every type that it defines has public visibility.</li>
+                </ul>
+
+
+                <h2>Semantic Versioning</h2>
+
+
+                <ul>
+                    <li>A major version change seems to indicate a change in the public specification of a software component, such that subtyping rules don't allow compatibility.</li>
+                    <li>A minor version change seems to indicate a change in the public specification of a software component, such that subtyping rules do allow compatibility.</li>
+                    <li>A patch version change seems to indicate a change in the implementation of a software component.</li>
+                    <li>The subtyping rules aren't obvious. (Are specifications covariant with respect to some types, contravariant with respect to other types, and invariant in all other cases?)</li>
+                    <li>Package managers should validate/enforce semantic versions, but they (mostly?) don't.</li>
                 </ul>
 
 

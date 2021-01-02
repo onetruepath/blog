@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>One True Path</title>
+        <link href="0.css" rel="stylesheet">
+    </head>
+    <body>
+        <main>
+            <article>
+
+
+                <h1>Some Thoughts About Resources</h1>
+
+
+                <p>
+                    As far as I know, a resource is (by definition) something that should be destroyed when it's no longer needed.
+                    Examples include a memory allocation that should be deallocated, a file handle that should be closed, and so on.
+                    Some type systems (affine type systems, linear type systems, maybe others) seem to explicitly account for the existence of resources.
+                    But why does this concept exist in the first place?
+                </p> <p>
+                    Resources don't seem to be message objects.
+                    In fact, I'm not sure if it makes sense to call them objects at all, since they don't seem to encapsulate the state that defines them.
+                    Are they just an identifier/reference associated with an obligation that hasn't been honored yet?
+                    An incomplete computation?
+                    An unfinished conversation between two objects?
+                </p> <p>
+                    In C#, a FileSystem service might expose an OpenFile method that returns a FileHandle resource that implements IDisposable.
+                    But the FileSystem needs to trust that Dispose will be called by some external piece of logic; it can't enforce that invariant.
+                    How is that acceptable, when the state of the FileSystem is normally the responsibility of the FileSystem itself?
+                </p> <p>
+                    Suppose that a FileSystem service exposes an OpenFile&lt;T&gt; method that accepts Func&lt;FileHandle, T&gt; as a continuation parameter and returns T.
+                    In this case, FileHandle doesn't need to implement IDisposable, and the FileSystem doesn't need to trust any external piece of logic.
+                    Instead, the FileSystem can just invoke CloseFile after the continuation is executed but before the result is returned.
+                    Is there any downside to this approach?
+                    If not, then why does IDisposable exist?
+                </p> <p>
+                    If continuations are used in the same way for memory management, then I think some things become impossible.
+                    So perhaps there is a disadvantage, and perhaps that disadvantage is sufficient to motivate the concept of resources in general.
+                    But I'm not yet convinced that anything of value is lost by using continuations, since it seems quite plausible to me that only undesirable things become impossible.
+                </p> <p>
+                    Is there a lesson here?
+                    I don't know.
+                </p>
+
+
+            </article>
+        </main>
+    </body>
+</html>
