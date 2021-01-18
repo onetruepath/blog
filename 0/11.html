@@ -14,35 +14,86 @@
                 <h1>Some Thoughts About Resources</h1>
 
 
+                <h2>An Introduction</h2>
+
+
                 <p>
-                    As far as I know, a resource is (by definition) something that should be destroyed when it's no longer needed.
-                    Examples include a memory allocation that should be deallocated, a file handle that should be closed, and so on.
+                    Let's assume for now that a resource is (by definition) something that should be destroyed when it's no longer needed.
+                    Examples include a memory allocation that should be deallocated, a file that should be closed, and so on.
                     Some type systems (affine type systems, linear type systems, maybe others) seem to explicitly account for the existence of resources.
-                    But why does this concept exist in the first place?
-                </p> <p>
-                    Resources don't seem to be message objects.
-                    In fact, I'm not sure if it makes sense to call them objects at all, since they don't seem to encapsulate the state that defines them.
-                    Are they just an identifier/reference associated with an obligation that hasn't been honored yet?
-                    An incomplete computation?
-                    An unfinished conversation between two objects?
-                </p> <p>
-                    In C#, a FileSystem service might expose an OpenFile method that returns a FileHandle resource that implements IDisposable.
-                    But the FileSystem needs to trust that Dispose will be called by some external piece of logic; it can't enforce that invariant.
-                    How is that acceptable, when the state of the FileSystem is normally the responsibility of the FileSystem itself?
-                </p> <p>
-                    Suppose that a FileSystem service exposes an OpenFile&lt;T&gt; method that accepts Func&lt;FileHandle, T&gt; as a continuation parameter and returns T.
-                    In this case, FileHandle doesn't need to implement IDisposable, and the FileSystem doesn't need to trust any external piece of logic.
-                    Instead, the FileSystem can just invoke CloseFile after the continuation is executed but before the result is returned.
-                    Is there any downside to this approach?
-                    If not, then why does IDisposable exist?
-                </p> <p>
-                    If continuations are used in the same way for memory management, then I think some things become impossible.
-                    So perhaps there is a disadvantage, and perhaps that disadvantage is sufficient to motivate the concept of resources in general.
-                    But I'm not yet convinced that anything of value is lost by using continuations, since it seems quite plausible to me that only undesirable things become impossible.
-                </p> <p>
-                    Is there a lesson here?
-                    I don't know.
+                    Setting that aside, let's focus on the concept of resources from an object-oriented perspective.
                 </p>
+
+
+                <h2>An Argument</h2>
+
+
+                <p>
+                    In C#, the idiomatic representation of a resource is an object that implements the IDisposable interface.
+                    This interface exposes a single method called Dispose that accepts no arguments and returns no values.
+                    Implicitly, the method has an impure postcondition; it changes the state of some external system such that the resource is no longer valid.
+                    This is very strange.
+                </p> <p>
+                    One of the basic rules of object-oriented programming is that you should only change the state of an object by invoking one of the object's methods.
+                    Another basic rule is that objects should never exist in an invalid state.
+                    Why do resources seem to violate these rules?
+                </p> <p>
+                    Perhaps you could argue that you aren't changing the state of an external system by destroying a resource?
+                    But I'm not sympathetic to that argument.
+                    If you want to open a file, then you need to change the state of the filesystem.
+                    If you want to close a file, then you need to change the state of the filesystem again.
+                    The filesystem is external to a file in the same way that a library is external to a book.
+                    If this isn't already obvious, then trying to implement a mock filesystem should make it more clear.
+                </p> <p>
+                    Perhaps you could argue that it's okay to invoke a filesystem method indirectly, when you invoke Dispose?
+                    But I'm not sympathetic to that argument, either.
+                    Yes, you can do that; it's basically what happens when you close a file stream in C# using the standard library.
+                    But it makes about as much sense as telling a book to take itself back to the library.
+                </p> <p>
+                    Let's assume for now that you want to ignore the IDisposable pattern in favor of e.g. a filesystem service with one method to open files and another to close them.
+                    If you imagine a sequence diagram for this approach, then you should see a pair of service objects represented by vertical lines.
+                    Early in the diagram, you should see an exchange which opens a file: A request (imagine a path) and a response (imagine a file handle).
+                    Later in the diagram, you should see an exchange which closes the file: A request (imagine a file handle) and a response (imagine an empty tuple).
+                    There aren't really any resource objects in this diagram; even the file handle is better understood as a resource identifier.
+                    So what exactly is a resource object?
+                </p> <p>
+                    The premise of the question is flawed, because resources aren't objects.
+                    You could say that a resource is a kind of state, I suppose; a precondition that exists long enough to invoke certain methods.
+                    Or you could say that a resource is a kind of interaction; a conversation that lasts long enough to make certain requests.
+                    But resources don't have their own state, and they can't send or receive messages, so calling them objects doesn't make sense.
+                </p>
+
+
+                <h2>Comments</h2>
+
+
+                <p>
+                    That's an argument for using the word "resource" in a particular way, but it's not necessarily a good argument.
+                    Why focus on C#, when idiomatic C++ uses a paradigm called "Resource Allocation Is Initialization"?
+                    Why claim that resources and objects are totally different things, when objects can have constructors and destructors and lifetimes?
+                </p> <p>
+                    Honestly, I'm not entirely convinced by the argument myself.
+                    I think it's a useful perspective, but the most interesting questions are the questions that it fails to address.
+                </p>
+
+
+                <h2>Appendix</h2>
+
+
+                <figure>
+                    <div>
+                        <blockquote>
+                            <pre><code>// This pattern can be used to enforce deallocation of resources.             </pre></code>
+                            <pre><code>public class FileSystem : IFileSystem {                                       </pre></code>
+                            <pre><code>    public T ReadFromFile&lt;T&gt;(string path, Func&lt;Stream, T&gt; fn) {   </pre></code>
+                            <pre><code>        using (var stream = File.Open(path, FileMode.Open, FileAccess.Read)) {</pre></code>
+                            <pre><code>            return fn(stream);                                                </pre></code>
+                            <pre><code>        }                                                                     </pre></code>
+                            <pre><code>    }                                                                         </pre></code>
+                            <pre><code>}                                                                             </pre></code>
+                        </blockquote>
+                    </div>
+                </figure>
 
 
             </article>
