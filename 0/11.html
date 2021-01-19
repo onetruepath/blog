@@ -83,14 +83,14 @@
                 <figure>
                     <div>
                         <blockquote>
-                            <pre><code>// This pattern can be used to enforce deallocation of resources.             </pre></code>
-                            <pre><code>public class FileSystem : IFileSystem {                                       </pre></code>
-                            <pre><code>    public T ReadFromFile&lt;T&gt;(string path, Func&lt;Stream, T&gt; fn) {   </pre></code>
-                            <pre><code>        using (var stream = File.Open(path, FileMode.Open, FileAccess.Read)) {</pre></code>
-                            <pre><code>            return fn(stream);                                                </pre></code>
-                            <pre><code>        }                                                                     </pre></code>
-                            <pre><code>    }                                                                         </pre></code>
-                            <pre><code>}                                                                             </pre></code>
+                            <pre><code>// This pattern can be used to enforce deallocation of resources.                             </pre></code>
+                            <pre><code>public class FileSystem : IFileSystem {                                                       </pre></code>
+                            <pre><code>    public TResult ReadFromFile&lt;TResult&gt;(string path, Func&lt;Stream, TResult&gt; fn) { </pre></code>
+                            <pre><code>        using (var stream = File.Open(path, FileMode.Open, FileAccess.Read)) {                </pre></code>
+                            <pre><code>            return fn(stream);                                                                </pre></code>
+                            <pre><code>        }                                                                                     </pre></code>
+                            <pre><code>    }                                                                                         </pre></code>
+                            <pre><code>}                                                                                             </pre></code>
                         </blockquote>
                     </div>
                 </figure>

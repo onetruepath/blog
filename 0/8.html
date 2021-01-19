@@ -14,6 +14,9 @@
                 <h1>Some Thoughts About Error Handling</h1>
 
 
+                <h2>Guidelines</h2>
+
+
                 <p>
                     If you want to support error handling, then the semantics should be enforced by the static type system.
                     That usually means returning some kind of tagged union that the static type system understands.
@@ -24,9 +27,56 @@
                     This should make it possible to refactor the code or fix bugs without a breaking change.
                 </p> <p>
                     Error handling should probably be supported for IO and parsing, because that kind of logic tends to fail even if the code is correct.
-                    But error handling probably shouldn't be supported for bugs (e.g. failure to comply with preconditions or postconditions).
+                    But error handling probably shouldn't be supported for bugs.
                     Bugs tend to put the process into an undefined state that can only be addressed by killing the process.
                 </p>
+
+
+                <h2>Comments</h2>
+
+
+                <p>
+                    Methods can accept a pair of continuation parameters (one for the happy path, and one for the unhappy path) instead of returning a tagged union.
+                    The two approaches are basically equivalent.
+                    Often the unhappy path is short, because the caller chooses to throw the relevant error instead of handling it.
+                </p> <p>
+                    If you're tempted to throw an exception because a pure precondition was violated, then you probably failed to properly express that precondition as a parameter type.
+                    To offer a contrived example: The static type system can prevent division-by-zero errors if you use a NonZeroInt type as the second parameter of a division method.
+                    If you're implementing a type like NonZeroInt, though, then you probably want to support error handling for the relevant precondition in a factory method.
+                </p> <p>
+                    If you're tempted to express an impure precondition as a parameter type, then you're probably better off with support for error handling instead.
+                    To offer another contrived example: You can create a type called PathToFileThatExists, and use it as the first parameter of a file reading method, but the name is misleading.
+                    The file won't necessarily exist by the time you invoke the file reading method, so you still need to account for the unhappy possibility of a missing file.
+                </p>
+
+
+                <h2>Appendix</h2>
+
+
+                <figure>
+                    <div>
+                        <blockquote>
+                            <pre><code>// This is one way to support error handling for a pure precondition in a factory method.                                                                 </pre></code>
+                            <pre><code>public class NonZeroInt {                                                                                                                                 </pre></code>
+                            <pre><code>    public int Value { get; }                                                                                                                             </pre></code>
+                            <pre><code>    public static TResult From&lt;TResult&gt;(int arg, Func&lt;NonZeroInt, TResult&gt; happy, Func&lt;ArgumentOutOfRangeException, TResult&gt; unhappy) { </pre></code>
+                            <pre><code>        return (arg == 0) ? unhappy(new ArgumentOutOfRangeException(nameof(arg))) : happy(new NonZeroInt(arg));                                           </pre></code>
+                            <pre><code>    }                                                                                                                                                     </pre></code>
+                            <pre><code>    private NonZeroInt(int value) { Value = value; }                                                                                                      </pre></code>
+                            <pre><code>}                                                                                                                                                         </pre></code>
+                            <pre><code>                                                                                                                                                          </pre></code>
+                            <pre><code>// Error handling isn't needed here because this method can't fail.                                                                                       </pre></code>
+                            <pre><code>public static class MathUtils {                                                                                                                           </pre></code>
+                            <pre><code>    public static int Divide(int lhs, NonZeroInt rhs) { return lhs / rhs.Value; }                                                                         </pre></code>
+                            <pre><code>}                                                                                                                                                         </pre></code>
+                            <pre><code>                                                                                                                                                          </pre></code>
+                            <pre><code>// You generally want to support error handling for impure preconditions.                                                                                 </pre></code>
+                            <pre><code>public interface IFileSystem {                                                                                                                            </pre></code>
+                            <pre><code>    Task&lt;TaggedUnion&lt;IReadOnlyList&lt;byte&gt;, FileNotFoundException&gt;&gt; ReadFile(string path);                                                </pre></code>
+                            <pre><code>}                                                                                                                                                         </pre></code>
+                        </blockquote>
+                    </div>
+                </figure>
 
 
             </article>

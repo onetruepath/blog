@@ -14,15 +14,37 @@
                 <h1>Some Thoughts About Null References</h1>
 
 
-                <p>
-                    The irony of null references, in a language that always permits them, is that you can't actually use them for anything.
-                    If you violate that rule, then convention can't save you, so you condemn yourself and others to an impossible obligation:
-                    Either read and memorize the documentation for every method you invoke, or validate all arguments and return values everywhere.
-                </p> <p>
-                    Obviously, that isn't practical.
-                    All you can really do is validate untrusted arguments, avoid returning null references, and pray that everyone else does the same thing.
-                    This is especially true in public methods, because every bad thing becomes worse in public methods.
-                </p>
+                <h2>Guidelines</h2>
+
+
+                <ul>
+                    <li>Any programming language that allows all references to be null is fundamentally broken.</li>
+                    <li>Any programming language that allows some references to be null should force you to handle both possibilities when using a potentially null reference.</li>
+                    <li>If references can always be null, then you should start every public method in every public class by validating every argument and throwing an exception if any argument is null.</li>
+                    <li>If references can always be null, then you should never return a null reference from any public method in any public class.</li>
+                </ul>
+
+
+                <h2>Appendix</h2>
+
+
+                <figure>
+                    <div>
+                        <blockquote>
+                            <pre><code>// This pattern can be used to support optional values that have reasonable semantics.                           </pre></code>
+                            <pre><code>// Even so, you probably shouldn't use this pattern if a more idiomatic solution is available.                   </pre></code>
+                            <pre><code>public abstract class Nullable&lt;T&gt; {                                                                        </pre></code>
+                            <pre><code>    public static Nullable&lt;T&gt; FromSomething(T value) { return new Something(value); }                      </pre></code>
+                            <pre><code>    public static Nullable&lt;T&gt; FromNothing() { return new Nothing(); }                                      </pre></code>
+                            <pre><code>    public abstract TResult Match&lt;TResult&gt;(Func&lt;T, TResult&gt; something, Func&lt;TResult&gt; nothing); </pre></code>
+                            <pre><code>                                                                                                                 </pre></code>
+                            <pre><code>    private Nullable() { }                                                                                       </pre></code>
+                            <pre><code>    private class Something : Nullable&lt;T&gt; { ... }                                                          </pre></code>
+                            <pre><code>    private class Nothing : Nullable&lt;T&gt; { ... }                                                            </pre></code>
+                            <pre><code>}                                                                                                                </pre></code>
+                        </blockquote>
+                    </div>
+                </figure>
 
 
             </article>
