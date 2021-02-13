@@ -16,24 +16,28 @@
 
                 <p>
                     If you're defining a method in an object-oriented language, then you need to choose parameter types and a return type.
-                    One possible choice (and a very popular choice, I should add) is the string type for the relevant language.
-                    This is almost always a terrible choice.
+                    One possible choice is to use primitive datatypes.
+                    This is almost always a bad idea.
                 </p> <p>
                     The first problem is the lack of value constraints.
                     A method signature is a contract, and the types within that signature encode the preconditions and postconditions for that contract.
-                    If you use the string type to specify a precondition, then you're obligated to establish the postconditions in the contract, regardless of what value you actually receive.
-                    If someone takes a 16 MiB video file, parses it as UTF-32 encoded text, and gives you the resulting string... Well, that's your problem now.
+                    If you use a primitive datatype to specify a precondition, then you're obligated to establish the postconditions in the contract, regardless of what value you actually receive.
+                    That means that asking for an unconstrained string is always wrong, unless you're really willing to accept a 16 MiB video file that was parsed as UTF-32 encoded text.
                 </p> <p>
                     The second problem is the lack of semantic constraints.
                     If you're implementing a guidance system for a missile, and you use primitive integer types for target latitude, target longitude, and speed, then you're going to have a bad time.
                     How many lines of code can you write without giving a (latitude, longitude) pair to a method that expects a (longitude, latitude) pair?
                     How many lines of code can you write without giving a speed in kilometers per hour to a method that expects a speed in meters per second?
                 </p> <p>
-                    Of course, that second problem isn't just a problem with strings; the first example that came to mind didn't even involve strings.
-                    Likewise, the first problem often exists for other primitive datatypes.
-                    But strings are worse than other primitive datatypes, because the set of possible values is infinite and the set of reasonable interpretations is unbounded.
+                    The third problem is that primitive datatypes make refactoring much more difficult.
+                    If you want to change a 32 bit value into a 64 bit value, then you need to update all of the plumbing that carries that value.
+                    This is trivial if the value is wrapped in a custom datatype, but very difficult otherwise.
                 </p> <p>
-                    The lesson, I think, is that you should be deeply suspicious of any primitive datatype that appears in a method signature.
+                    It may seem impractical to define so many custom datatypes, but I think people tend to overestimate how many types are actually needed.
+                    You certainly don't need a type for every ephemeral value that gets created and destroyed in a local computation; primitive datatypes are the norm there.
+                    But when it comes to method signatures, you should expect the arguments and return values to have well-defined semantics that show up over and over again throughout the codebase.
+                </p> <p>
+                    Ultimately primitive datatypes are still necessary, but using them in method signatures should be the exception and not the rule.
                     This is especially true for the internal boundaries of an application, where everything should already be parsed and validated.
                     It is somewhat less true at the external boundary, where you parse and validate untrusted values to instantiate more meaningful datatypes.
                 </p>

@@ -18,8 +18,8 @@
 
 
                 <p>
-                    Let's assume for now that a resource is (by definition) something that should be destroyed when it's no longer needed.
-                    Examples include a memory allocation that should be deallocated, a file that should be closed, and so on.
+                    Let's assume for now that a resource is (by definition) something that gets allocated, used, and then deallocated.
+                    Examples include a block of memory that should be released, a file that should be closed, and so on.
                     Some type systems (affine type systems, linear type systems, maybe others) seem to explicitly account for the existence of resources.
                     Setting that aside, let's focus on the concept of resources from an object-oriented perspective.
                 </p>
@@ -38,7 +38,7 @@
                     Another basic rule is that objects should never exist in an invalid state.
                     Why do resources seem to violate these rules?
                 </p> <p>
-                    Perhaps you could argue that you aren't changing the state of an external system by destroying a resource?
+                    Perhaps you could argue that you aren't changing the state of an external system by deallocating a resource?
                     But I'm not sympathetic to that argument.
                     If you want to open a file, then you need to change the state of the filesystem.
                     If you want to close a file, then you need to change the state of the filesystem again.
@@ -52,15 +52,15 @@
                 </p> <p>
                     Let's assume for now that you want to ignore the IDisposable pattern in favor of e.g. a filesystem service with one method to open files and another to close them.
                     If you imagine a sequence diagram for this approach, then you should see a pair of service objects represented by vertical lines.
-                    Early in the diagram, you should see an exchange which opens a file: A request (imagine a path) and a response (imagine a file handle).
-                    Later in the diagram, you should see an exchange which closes the file: A request (imagine a file handle) and a response (imagine an empty tuple).
+                    Early in the diagram, you should see an exchange which opens a file: A request that contains a path, and a response that contains a file handle.
+                    Later in the diagram, you should see an exchange which closes the file: A request that contains a file handle, and a response that contains an empty tuple.
                     There aren't really any resource objects in this diagram; even the file handle is better understood as a resource identifier.
                     So what exactly is a resource object?
                 </p> <p>
-                    The premise of the question is flawed, because resources aren't objects.
-                    You could say that a resource is a kind of state, I suppose; a precondition that exists long enough to invoke certain methods.
-                    Or you could say that a resource is a kind of interaction; a conversation that lasts long enough to make certain requests.
-                    But resources don't have their own state, and they can't send or receive messages, so calling them objects doesn't make sense.
+                    The premise of the question is flawed, because a resource isn't an object.
+                    We say that a resource exists when an identifier has a particular relationship with the current state of some external system.
+                    That relationship is the relationship that exists between allocation and deallocation.
+                    But a resource doesn't have its own internal state, and it can't send or receive messages, so it isn't an object.
                 </p>
 
 
@@ -69,11 +69,29 @@
 
                 <p>
                     That's an argument for using the word "resource" in a particular way, but it's not necessarily a good argument.
-                    Why focus on C#, when idiomatic C++ uses a paradigm called "Resource Allocation Is Initialization"?
-                    Why claim that resources and objects are totally different things, when objects can have constructors and destructors and lifetimes?
+                    I'm still trying to understand these concepts, so I should probably start with some observations.
                 </p> <p>
-                    Honestly, I'm not entirely convinced by the argument myself.
-                    I think it's a useful perspective, but the most interesting questions are the questions that it fails to address.
+                    First, a called method does not generally take ownership of a resource from a calling method that passes the resource identifier as an argument.
+                    Instead, the resource is "borrowed" and then (implicitly or explicitly) returned to the caller when the called method returns.
+                </p> <p>
+                    Second, a called method does not generally yield ownership of a resource to the calling method as a return value.
+                    Instead, the resource is typically deallocated in the same method that allocated it.
+                </p> <p>
+                    Third, a calling method can "borrow" a resource from a called method if the called method has a delegate parameter that accepts a resource identifier as an argument.
+                    Basically, the calling method defines a delegate, and the called method invokes it between allocation and deallocation of the resource.
+                </p> <p>
+                    Fourth, a garbage collector seems to be a mechanism for subverting the rule about deallocating a resource in the same method that allocated it.
+                    This allows a calling method to "borrow" a resource from a called method without using delegate parameters, but I'm not sure when (if ever) that's desirable.
+                </p> <p>
+                    Finally, an object seems to be a type of resource.
+                    We say that an object exists when a memory address has a particular relationship with the current state of process memory.
+                    That relationship is the relationship that exists between (successful) invocation of the constructor and (successful) invocation of the destructor.
+                    And it's exactly that relationship which makes it possible for the object to support internal state and message passing.
+                </p> <p>
+                    If you try to visualize this with a sequence diagram, you see something kind of interesting.
+                    The relationship between the object's memory address and process memory visibly exists for a specific period of time, and it's bounded by the exchange of specific messages.
+                    Those messages represent invocation of a constructor and a destructor, and they're being sent (directly or indirectly) to an "object" that represents process memory.
+                    So long as the relationship exists, you have a new "object" that can send or receive messages, but this object seems to exist on a different layer of abstraction.
                 </p>
 
 
