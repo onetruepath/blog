@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>One True Path</title>
+        <title>Some Thoughts About Resources</title>
         <link href="0.css" rel="stylesheet">
     </head>
     <body>
@@ -101,14 +101,14 @@
                 <figure>
                     <div>
                         <blockquote>
-                            <pre><code>// This pattern can be used to enforce deallocation of resources.                             </pre></code>
-                            <pre><code>public class FileSystem : IFileSystem {                                                       </pre></code>
-                            <pre><code>    public TResult ReadFromFile&lt;TResult&gt;(string path, Func&lt;Stream, TResult&gt; fn) { </pre></code>
-                            <pre><code>        using (var stream = File.Open(path, FileMode.Open, FileAccess.Read)) {                </pre></code>
-                            <pre><code>            return fn(stream);                                                                </pre></code>
-                            <pre><code>        }                                                                                     </pre></code>
-                            <pre><code>    }                                                                                         </pre></code>
-                            <pre><code>}                                                                                             </pre></code>
+                            <pre><code>// This pattern can be used to enforce deallocation of resources.                             </code></pre>
+                            <pre><code>public class FileSystem : IFileSystem {                                                       </code></pre>
+                            <pre><code>    public TResult ReadFromFile&lt;TResult&gt;(string path, Func&lt;Stream, TResult&gt; fn) { </code></pre>
+                            <pre><code>        using (var stream = File.Open(path, FileMode.Open, FileAccess.Read)) {                </code></pre>
+                            <pre><code>            return fn(stream);                                                                </code></pre>
+                            <pre><code>        }                                                                                     </code></pre>
+                            <pre><code>    }                                                                                         </code></pre>
+                            <pre><code>}                                                                                             </code></pre>
                         </blockquote>
                     </div>
                 </figure>

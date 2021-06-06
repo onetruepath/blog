@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>One True Path</title>
+        <title>Some Thoughts About Error Handling</title>
         <link href="0.css" rel="stylesheet">
     </head>
     <body>
@@ -56,24 +56,24 @@
                 <figure>
                     <div>
                         <blockquote>
-                            <pre><code>// This is one way to support error handling for a pure precondition in a factory method.                                                                 </pre></code>
-                            <pre><code>public class NonZeroInt {                                                                                                                                 </pre></code>
-                            <pre><code>    public int Value { get; }                                                                                                                             </pre></code>
-                            <pre><code>    public static TResult From&lt;TResult&gt;(int arg, Func&lt;NonZeroInt, TResult&gt; happy, Func&lt;ArgumentOutOfRangeException, TResult&gt; unhappy) { </pre></code>
-                            <pre><code>        return (arg == 0) ? unhappy(new ArgumentOutOfRangeException(nameof(arg))) : happy(new NonZeroInt(arg));                                           </pre></code>
-                            <pre><code>    }                                                                                                                                                     </pre></code>
-                            <pre><code>    private NonZeroInt(int value) { Value = value; }                                                                                                      </pre></code>
-                            <pre><code>}                                                                                                                                                         </pre></code>
-                            <pre><code>                                                                                                                                                          </pre></code>
-                            <pre><code>// Error handling isn't needed here because this method can't fail.                                                                                       </pre></code>
-                            <pre><code>public static class MathUtils {                                                                                                                           </pre></code>
-                            <pre><code>    public static int Divide(int lhs, NonZeroInt rhs) { return lhs / rhs.Value; }                                                                         </pre></code>
-                            <pre><code>}                                                                                                                                                         </pre></code>
-                            <pre><code>                                                                                                                                                          </pre></code>
-                            <pre><code>// You generally want to support error handling for impure preconditions.                                                                                 </pre></code>
-                            <pre><code>public interface IFileSystem {                                                                                                                            </pre></code>
-                            <pre><code>    Task&lt;TaggedUnion&lt;IReadOnlyList&lt;byte&gt;, FileNotFoundException&gt;&gt; ReadFile(string path);                                                </pre></code>
-                            <pre><code>}                                                                                                                                                         </pre></code>
+                            <pre><code>// This is one way to support error handling for a pure precondition in a factory method.                                                                 </code></pre>
+                            <pre><code>public class NonZeroInt {                                                                                                                                 </code></pre>
+                            <pre><code>    public int Value { get; }                                                                                                                             </code></pre>
+                            <pre><code>    public static TResult From&lt;TResult&gt;(int arg, Func&lt;NonZeroInt, TResult&gt; happy, Func&lt;ArgumentOutOfRangeException, TResult&gt; unhappy) { </code></pre>
+                            <pre><code>        return (arg == 0) ? unhappy(new ArgumentOutOfRangeException(nameof(arg))) : happy(new NonZeroInt(arg));                                           </code></pre>
+                            <pre><code>    }                                                                                                                                                     </code></pre>
+                            <pre><code>    private NonZeroInt(int value) { Value = value; }                                                                                                      </code></pre>
+                            <pre><code>}                                                                                                                                                         </code></pre>
+                            <pre><code>                                                                                                                                                          </code></pre>
+                            <pre><code>// Error handling isn't needed here because this method can't fail.                                                                                       </code></pre>
+                            <pre><code>public static class MathUtils {                                                                                                                           </code></pre>
+                            <pre><code>    public static int Divide(int lhs, NonZeroInt rhs) { return lhs / rhs.Value; }                                                                         </code></pre>
+                            <pre><code>}                                                                                                                                                         </code></pre>
+                            <pre><code>                                                                                                                                                          </code></pre>
+                            <pre><code>// You generally want to support error handling for impure preconditions.                                                                                 </code></pre>
+                            <pre><code>public interface IFileSystem {                                                                                                                            </code></pre>
+                            <pre><code>    Task&lt;TaggedUnion&lt;IReadOnlyList&lt;byte&gt;, FileNotFoundException&gt;&gt; ReadFile(string path);                                                </code></pre>
+                            <pre><code>}                                                                                                                                                         </code></pre>
                         </blockquote>
                     </div>
                 </figure>

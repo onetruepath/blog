@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>One True Path</title>
+        <title>Some Thoughts About Null References</title>
         <link href="0.css" rel="stylesheet">
     </head>
     <body>
@@ -31,17 +31,17 @@
                 <figure>
                     <div>
                         <blockquote>
-                            <pre><code>// This pattern can be used to support optional values that have reasonable semantics.                           </pre></code>
-                            <pre><code>// Even so, you probably shouldn't use this pattern if a more idiomatic solution is available.                   </pre></code>
-                            <pre><code>public abstract class Nullable&lt;T&gt; {                                                                        </pre></code>
-                            <pre><code>    public static Nullable&lt;T&gt; FromSomething(T value) { return new Something(value); }                      </pre></code>
-                            <pre><code>    public static Nullable&lt;T&gt; FromNothing() { return new Nothing(); }                                      </pre></code>
-                            <pre><code>    public abstract TResult Match&lt;TResult&gt;(Func&lt;T, TResult&gt; something, Func&lt;TResult&gt; nothing); </pre></code>
-                            <pre><code>                                                                                                                 </pre></code>
-                            <pre><code>    private Nullable() { }                                                                                       </pre></code>
-                            <pre><code>    private class Something : Nullable&lt;T&gt; { ... }                                                          </pre></code>
-                            <pre><code>    private class Nothing : Nullable&lt;T&gt; { ... }                                                            </pre></code>
-                            <pre><code>}                                                                                                                </pre></code>
+                            <pre><code>// This pattern can be used to support optional values that have reasonable semantics.                           </code></pre>
+                            <pre><code>// Even so, you probably shouldn't use this pattern if a more idiomatic solution is available.                   </code></pre>
+                            <pre><code>public abstract class Nullable&lt;T&gt; {                                                                        </code></pre>
+                            <pre><code>    public static Nullable&lt;T&gt; FromSomething(T value) { return new Something(value); }                      </code></pre>
+                            <pre><code>    public static Nullable&lt;T&gt; FromNothing() { return new Nothing(); }                                      </code></pre>
+                            <pre><code>    public abstract TResult Match&lt;TResult&gt;(Func&lt;T, TResult&gt; something, Func&lt;TResult&gt; nothing); </code></pre>
+                            <pre><code>                                                                                                                 </code></pre>
+                            <pre><code>    private Nullable() { }                                                                                       </code></pre>
+                            <pre><code>    private class Something : Nullable&lt;T&gt; { ... }                                                          </code></pre>
+                            <pre><code>    private class Nothing : Nullable&lt;T&gt; { ... }                                                            </code></pre>
+                            <pre><code>}                                                                                                                </code></pre>
                         </blockquote>
                     </div>
                 </figure>
