@@ -23,7 +23,7 @@
                 <p>
                     Let's start with Null, Unit, and Bool.
                     Null is a type with no values.
-                    Unit is a type with one value, which I'll call void.
+                    Unit is a type with one value, which I'll call unit.
                     Bool is a type with two values, which I'll call false and true.
                 </p> <p>
                     Now let's add Sigma and Pi.
@@ -57,8 +57,8 @@
                     The type Datum8 is our encoding for a byte.
                     Conceptually, it's a binary tree of depth eight in which inner nodes are dependent pair types and each leaf node is the Unit type.
                 </p> <p>
-                    A value of type Datum8 is serialized as eight consecutive bits, followed by a void that occupies no space.
-                    But this can be interpreted as a path through the aforementioned tree, followed by a value of the type that exists at the end of that path.
+                    A value of type Datum8 is serialized as eight consecutive bits, followed by a unit that occupies no space.
+                    This can be interpreted as a path through the aforementioned tree, followed by a value of the type that exists at the end of that path.
                     Let's use 0x00 through 0xFF to denote the possible values, and thus the possible paths through a binary tree of depth eight.
                 </p>
 
@@ -68,14 +68,14 @@
 
                 <figure>
                     <div>
-                        <pre>Union1(T00     T01) := (Sigma (: b Bool) (if b T00 T01))</pre>
-                        <pre>Union2(T00 ... T03) := (Sigma (: b Bool) (if b (Union1 T00     T01) (Union1 T02     T03)))</pre>
-                        <pre>Union3(T00 ... T07) := (Sigma (: b Bool) (if b (Union2 T00 ... T03) (Union2 T04 ... T07)))</pre>
-                        <pre>Union4(T00 ... T0F) := (Sigma (: b Bool) (if b (Union3 T00 ... T07) (Union3 T08 ... T0F)))</pre>
-                        <pre>Union5(T00 ... T1F) := (Sigma (: b Bool) (if b (Union4 T00 ... T0F) (Union4 T10 ... T1F)))</pre>
-                        <pre>Union6(T00 ... T3F) := (Sigma (: b Bool) (if b (Union5 T00 ... T1F) (Union5 T20 ... T3F)))</pre>
-                        <pre>Union7(T00 ... T7F) := (Sigma (: b Bool) (if b (Union6 T00 ... T3F) (Union6 T40 ... T7F)))</pre>
-                        <pre>Union8(T00 ... TFF) := (Sigma (: b Bool) (if b (Union7 T00 ... T7F) (Union7 T80 ... TFF)))</pre>
+                        <pre>(Union1 T00     T01) := (Sigma (: b Bool) (if b T00 T01))</pre>
+                        <pre>(Union2 T00 ... T03) := (Sigma (: b Bool) (if b (Union1 T00     T01) (Union1 T02     T03)))</pre>
+                        <pre>(Union3 T00 ... T07) := (Sigma (: b Bool) (if b (Union2 T00 ... T03) (Union2 T04 ... T07)))</pre>
+                        <pre>(Union4 T00 ... T0F) := (Sigma (: b Bool) (if b (Union3 T00 ... T07) (Union3 T08 ... T0F)))</pre>
+                        <pre>(Union5 T00 ... T1F) := (Sigma (: b Bool) (if b (Union4 T00 ... T0F) (Union4 T10 ... T1F)))</pre>
+                        <pre>(Union6 T00 ... T3F) := (Sigma (: b Bool) (if b (Union5 T00 ... T1F) (Union5 T20 ... T3F)))</pre>
+                        <pre>(Union7 T00 ... T7F) := (Sigma (: b Bool) (if b (Union6 T00 ... T3F) (Union6 T40 ... T7F)))</pre>
+                        <pre>(Union8 T00 ... TFF) := (Sigma (: b Bool) (if b (Union7 T00 ... T7F) (Union7 T80 ... TFF)))</pre>
                     </div>
                 </figure>
 
@@ -84,11 +84,11 @@
                     The type Union8 is our encoding for a union type with an eight bit tag.
                     Conceptually, it's a binary tree of depth eight in which inner nodes are dependent pair types and each leaf node is some type specified by a type parameter.
                 </p> <p>
-                    A value of type Union8(T00 ... TFF) is serialized as a pair of values concatenated together.
-                    The first element is an eight bit tag value, i.e. a path through the tree.
-                    The second element is a value of the type that was specified by a type parameter and identified by the tag value.
+                    A value of type Union8(T00 ... TFF) is serialized as a pair of elements concatenated together.
+                    This can be interpreted as a path through the tree (which specifies a type) followed by a payload (which inhabits the specified type).
+                    To use a value like this, you should specify a derivation from each possible payload type to a single known result type.
                 </p> <p>
-                    Note that we should probably allow Null as a default parameter type, such that Union8(Unit) is equivalent to Union8(Unit Null ... Null).
+                    Note that we could reasonably use notation where these type parameters are Null by default, such that Union8(Unit) is equivalent to Union8(Unit Null ... Null).
                 </p>
 
 
@@ -97,14 +97,14 @@
 
                 <figure>
                     <div>
-                        <pre>Tuple1(T00     T01) := (Pi (: b Bool) (if b T00 T01))</pre>
-                        <pre>Tuple2(T00 ... T03) := (Pi (: b Bool) (if b (Tuple1 T00     T01) (Tuple1 T02     T03)))</pre>
-                        <pre>Tuple3(T00 ... T07) := (Pi (: b Bool) (if b (Tuple2 T00 ... T03) (Tuple2 T04 ... T07)))</pre>
-                        <pre>Tuple4(T00 ... T0F) := (Pi (: b Bool) (if b (Tuple3 T00 ... T07) (Tuple3 T08 ... T0F)))</pre>
-                        <pre>Tuple5(T00 ... T1F) := (Pi (: b Bool) (if b (Tuple4 T00 ... T0F) (Tuple4 T10 ... T1F)))</pre>
-                        <pre>Tuple6(T00 ... T3F) := (Pi (: b Bool) (if b (Tuple5 T00 ... T1F) (Tuple5 T20 ... T3F)))</pre>
-                        <pre>Tuple7(T00 ... T7F) := (Pi (: b Bool) (if b (Tuple6 T00 ... T3F) (Tuple6 T40 ... T7F)))</pre>
-                        <pre>Tuple8(T00 ... TFF) := (Pi (: b Bool) (if b (Tuple7 T00 ... T7F) (Tuple7 T80 ... TFF)))</pre>
+                        <pre>(Tuple1 T00     T01) := (Pi (: b Bool) (if b T00 T01))</pre>
+                        <pre>(Tuple2 T00 ... T03) := (Pi (: b Bool) (if b (Tuple1 T00     T01) (Tuple1 T02     T03)))</pre>
+                        <pre>(Tuple3 T00 ... T07) := (Pi (: b Bool) (if b (Tuple2 T00 ... T03) (Tuple2 T04 ... T07)))</pre>
+                        <pre>(Tuple4 T00 ... T0F) := (Pi (: b Bool) (if b (Tuple3 T00 ... T07) (Tuple3 T08 ... T0F)))</pre>
+                        <pre>(Tuple5 T00 ... T1F) := (Pi (: b Bool) (if b (Tuple4 T00 ... T0F) (Tuple4 T10 ... T1F)))</pre>
+                        <pre>(Tuple6 T00 ... T3F) := (Pi (: b Bool) (if b (Tuple5 T00 ... T1F) (Tuple5 T20 ... T3F)))</pre>
+                        <pre>(Tuple7 T00 ... T7F) := (Pi (: b Bool) (if b (Tuple6 T00 ... T3F) (Tuple6 T40 ... T7F)))</pre>
+                        <pre>(Tuple8 T00 ... TFF) := (Pi (: b Bool) (if b (Tuple7 T00 ... T7F) (Tuple7 T80 ... TFF)))</pre>
                     </div>
                 </figure>
 
@@ -113,40 +113,47 @@
                     The type Tuple8 is our encoding for a tuple type with an eight bit index.
                     Conceptually, it's a binary tree of depth eight in which inner nodes are dependent function types and each leaf node is some type specified by a type parameter.
                 </p> <p>
-                    A value of type Tuple8(T00 ... TFF) is serialized as a sequence of values concatenated together.
-                    Each element is a value of some type that was specified by a type parameter and identified by the value's position within the tuple.
+                    A value of type Tuple8(T00 ... TFF) is serialized as a sequence of elements concatenated together.
+                    This can be interpreted as a table for mapping a path through the tree (which specifies a type) to a payload (which inhabits the specified type).
+                    To use a value like this, you should specify a derivation from a single known payload type to a single known result type.
                 </p> <p>
-                    Note that we should probably allow Unit as a default parameter type, such that Tuple8(Bool) is equivalent to Tuple8(Bool Unit ... Unit).
+                    Note that we could reasonably use notation where these type parameters are Unit by default, such that Tuple8(Bool) is equivalent to Tuple8(Bool Unit ... Unit).
                 </p>
 
 
                 <h2>Comments</h2>
 
 
-                <ul>
-                    <li>
-                        If two types with the same number of inhabitants are equivalent, then every type seems to have many possible encodings.
-                    </li> <li>
-                        Even if two types are equivalent by the above definition, associated values aren't necessarily the same size.
-                        Example: The value 0x00 inhabits Union8(Unit) and occupies eight bits of space.
-                        The value void occupies Unit and occupies zero bits of space.
-                    </li> <li>
-                        Values can inhabit multiple types. Example: The value 0x00 inhabits Union8(Unit) and Union8(Unit, Unit).
-                    </li> <li>
-                        If #T denotes the number of values in T, then #Union8(T00 ... TFF) is equal to (sum #T00 ... #TFF) while #Tuple8(T00 ... TFF) is equal to (product #T00 ... #TFF).
-                    </li> <li>
-                        I suspect that (Sigma (: t T) (F t)) and (Pi (: t T) (F t)) are equivalent to Union8(T00...) and Tuple8(T00...),
-                        when the number of inhabitants in T is equal to the number of (non-default) type parameters.
-                        I guess you'd need some kind of mapping to do anything with that?
-                    </li> <li>
-                        The logical gate NAND seems to have type Tuple2(Datum1 Datum1 Datum1 Datum1) and value 0b1110.
-                    </li> <li>
-                        There must be a way to encode complex functions without wasting space on a tuple that enumerates every possible result.
-                        I guess you need a layer of indirection?
-                        Some kind of pointer to a series of op-codes that are composed to produce the desired output?
-                        I'm not sure.
-                    </li>
-                </ul>
+                <p>
+                    I know very little about type theory.
+                    I'm trying to understand what a serialization format informed by type theory might look like, but that's kind of an atypical goal.
+                    Take everything above this point and everything below this point with a grain of salt.
+                </p> <p>
+                    So, what about arrays?
+                    It seems like there should be an operator that creates an array type, but that raises some questions.
+                    Is the size of the array part of the type, or part of the serialized value?
+                    If it's part of the type, do you need to find an encoding for type-level integers?
+                    If it's part of the serialized value, how do you encode it, and how large can it be?
+                    How do you even create an array value?
+                    And how do you use it?
+                </p> <p>
+                    I suppose an array is similar to a list, in the same way that a byte is similar to a natural number.
+                    Can you constrain the size of inductive types? Can you encode them efficiently?
+                    It's possible that everything else is misguided, and you'd be better off using inductive types for everything.
+                    Hard to say, given my current level of understanding.
+                </p> <p>
+                    Regardless, it's interesting that values of distinct types can have the same representation after they're serialized.
+                    And it's also interesting that two types with the same number of possible values won't necessarily have the same size.
+                </p> <p>
+                    You could probably continue to pull threads here, if you wanted to.
+                    I only used Sigma and Pi for trivial derivations, but they should be powerful enough to do a lot more.
+                    And I didn't focus too much on function types, which are actually pretty interesting.
+                </p> <p>
+                    You could probably argue that the logical gate NAND has type (Tuple2 Datum1 Datum1 Datum1 Datum1) and value 0b1110.
+                    I suppose that's enough for complex functions, but enumerating every possible result isn't very efficient when functions are complex.
+                    Presumably that's why we build computers with a relatively small number of primitive operations, and then use opcodes to reference those operations.
+                    More proof that every problem in computer science can be solved by adding a layer of indirection.
+                </p>
 
 
                 <h2>Concise Notation</h2>
