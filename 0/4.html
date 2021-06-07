@@ -66,11 +66,11 @@
                 </ul>
 
 
-                <h3>Ports</h3>
+                <h3>Gateways</h3>
 
 
                 <ul>
-                    <li>Ports are service objects.</li>
+                    <li>Gateways are service objects.</li>
                     <li>They can send messages directly to the host environment.</li>
                 </ul>
 
@@ -88,6 +88,13 @@
 
 
                 <p>
+                    This general approach is similar to "Ports and Adapters" (also known as "Hexagonal Architecture"), but with some differences.
+                    First, a dubious change in terminology on my part: I'm using the phrase "service interface" to mean "port" even though the original terminology was fine.
+                    Second, "Ports and Adapters" makes a distinction between primary ports and secondary ports, which is an important distinction that I'm ignoring at the moment.
+                    Third, I'm using the word "gateway" for a specific type of adapter. This probably conflicts with how that word is used elsewhere; I'm not sure.
+                    Finally, I'm trying to address some things that "Ports and Adapters" didn't address. There have been other attempts to do that, but I don't know much about them.
+                    With all of that out of the way, I'll move on to more general comments.
+                </p> <p>
                     The properties of a record object should be orthogonal to each other, meaning that you can't infer anything about the value of one property based on the value of another.
                     Otherwise there's a risk of inconsistency, and you need to go out of your way to validate the relevant invariants.
                 </p> <p>
@@ -103,7 +110,7 @@
                     Service objects typically control access to an external system that is both stateful and mutable.
                     I suspect that all of the methods exposed by service objects should be (a) idempotent and (b) transactional.
                 </p> <p>
-                    Adapters don't let you do anything that can't be done with ports, but they can be used to create a new layer of abstraction.
+                    Adapters don't let you do anything that can't be done with gateways, but they can be used to create a new layer of abstraction.
                     In the best case scenario, that higher layer of abstraction completely hides the previous layer of abstraction while reducing the exposed surface area.
                     That decouples higher layers of abstraction from lower layers, such that you can completely replace the lower layers without changing the higher layers.
                 </p> <p>
@@ -170,6 +177,7 @@
                     <li>A patch version change seems to indicate a change in the implementation of a software component.</li>
                     <li>The subtyping rules aren't obvious. (Are specifications covariant with respect to some types, contravariant with respect to other types, and invariant in all other cases?)</li>
                     <li>Package managers should validate/enforce semantic versions, but they (mostly?) don't.</li>
+                    <li>It's not clear to me that semantic versions will actually be used when we eventually solve the problems that package managers have (mostly?) failed to solve.</li>
                 </ul>
 
 
