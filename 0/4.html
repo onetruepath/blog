@@ -17,61 +17,72 @@
                 <h2>Object-Oriented Semantics</h2>
 
 
-                <h3>Objects</h3>
+                <h3>Object Classes</h3>
 
 
                 <ul>
-                    <li>Objects can't be created with an invalid state.</li>
+                    <li>Object Classes are classes.</li>
+                    <li>They define some set of public methods.</li>
+                    <li>They define some set of private fields.</li>
                 </ul>
 
 
-                <h3>Message Objects</h3>
+                <h3>Message Classes</h3>
 
 
                 <ul>
-                    <li>Message objects are objects.</li>
-                    <li>They're always immutable.</li>
-                    <li>They can't expose methods that have impure preconditions.</li>
-                    <li>They can't expose methods that have impure postconditions.</li>
+                    <li>Message Classes are Object Classes.</li>
+                    <li>They don't allow mutation.</li>
+                    <li>They don't define methods that have impure preconditions.</li>
+                    <li>They don't define methods that have impure postconditions.</li>
                 </ul>
 
 
-                <h3>Value Objects</h3>
+                <h3>Value Classes</h3>
 
 
                 <ul>
-                    <li>Value objects are message objects.</li>
-                    <li>They always comply with some set of value constraints.</li>
-                    <li>Inheritance is used primarily to add additional value constraints.</li>
+                    <li>Value Classes are Message Classes.</li>
+                    <li>They enforce some set of value constraints.</li>
+                    <li>Inheritance is used mostly to enforce additional value constraints.</li>
                 </ul>
 
 
-                <h3>Record Objects</h3>
+                <h3>Record Classes</h3>
 
 
                 <ul>
-                    <li>Record objects are message objects.</li>
-                    <li>They always expose some set of properties.</li>
-                    <li>Inheritance is used primarily to add additional properties.</li>
+                    <li>Record Classes are Message Classes.</li>
+                    <li>They expose some set of properties.</li>
+                    <li>Inheritance is used mostly to expose additional properties.</li>
                 </ul>
 
 
-                <h3>Service Objects</h3>
+                <h3>Ports</h3>
 
 
                 <ul>
-                    <li>Service objects are objects.</li>
-                    <li>They can expose methods that have impure preconditions.</li>
-                    <li>They can expose methods that have impure postconditions.</li>
+                    <li>Ports are interfaces.</li>
+                    <li>They declare methods that have impure preconditions.</li>
+                    <li>They declare methods that have impure postconditions.</li>
                 </ul>
 
 
-                <h3>Gateways</h3>
+                <h3>Axiomatic Ports</h3>
 
 
                 <ul>
-                    <li>Gateways are service objects.</li>
-                    <li>They can send messages directly to the host environment.</li>
+                    <li>Axiomatic Ports are Ports.</li>
+                    <li>They specify functionality to be imported or injected.</li>
+                </ul>
+
+
+                <h3>Derived Ports</h3>
+
+
+                <ul>
+                    <li>Derived Ports are Ports.</li>
+                    <li>They specify functionality to be exported or extracted.</li>
                 </ul>
 
 
@@ -79,8 +90,27 @@
 
 
                 <ul>
-                    <li>Adapters are service objects.</li>
-                    <li>They can't send messages directly to the host environment.</li>
+                    <li>Adapters are Object Classes.</li>
+                    <li>They define methods that have impure preconditions.</li>
+                    <li>They define methods that have impure postconditions.</li>
+                </ul>
+
+
+                <h3>Axiomatic Adapters</h3>
+
+
+                <ul>
+                    <li>Axiomatic Adapters are Adapters.</li>
+                    <li>They implement functionality to be imported or injected.</li>
+                </ul>
+
+
+                <h3>Derived Adapters</h3>
+
+
+                <ul>
+                    <li>Derived Adapters are Adapters.</li>
+                    <li>They implement functionality to be exported or extracted.</li>
                 </ul>
 
 
@@ -88,37 +118,35 @@
 
 
                 <p>
-                    This general approach is similar to "Ports and Adapters" (also known as "Hexagonal Architecture"), but with some differences.
-                    First, a dubious change in terminology on my part: I'm using the phrase "service interface" to mean "port" even though the original terminology was fine.
-                    Second, "Ports and Adapters" makes a distinction between primary ports and secondary ports, which is an important distinction that I'm ignoring at the moment.
-                    Third, I'm using the word "gateway" for a specific type of adapter. This probably conflicts with how that word is used elsewhere; I'm not sure.
-                    Finally, I'm trying to address some things that "Ports and Adapters" didn't address. There have been other attempts to do that, but I don't know much about them.
-                    With all of that out of the way, I'll move on to more general comments.
+                    The terminology here is based on the terminology from Hexagonal Architecture (also called Ports and Adapters),
+                    but "derived" and "axiomatic" are being used instead of "primary" and "secondary" to emphasize the nature of the distinction.
                 </p> <p>
-                    The properties of a record object should be orthogonal to each other, meaning that you can't infer anything about the value of one property based on the value of another.
+                    The properties of a record should be orthogonal to each other, meaning that you can't infer anything about the value of one property based on the value of another.
                     Otherwise there's a risk of inconsistency, and you need to go out of your way to validate the relevant invariants.
                 </p> <p>
-                    Service objects are usually (always?) immutable.
-                    Often they're stateless, but sometimes they hold a configuration.
-                    The configuration constrains the set of interfaces that the service object can reasonably implement.
-                    A configuration that exposes more properties can generally be used to implement more interfaces.
-                    A configuration that exposes value objects with relatively strict value constraints can generally be used to implement relatively strict interfaces.
+                    Adapters exist mostly to define input/output methods, and input/output methods should generally be asynchronous.
+                    This might be implemented with async/await in high-level languages.
+                    But in low-level languages, adapters are implemented with explicit state machines and message loops.
                 </p> <p>
-                    Most service objects implement an interface, and most interfaces define a protocol for communicating with service objects.
-                    It may sometimes be useful to define an interface for communicating with message objects, but even if that's the case, it's the exception and not the rule.
+                    Aside from the current state of the state machine, and perhaps an immutable configuration, it's reasonable for adapters to be stateless.
+                    If there is a configuration, then it influences the set of interfaces that the adapter can reasonably implement.
+                    A configuration that exposes more properties, or more constrained values, can be used to implement more interfaces.
                 </p> <p>
-                    Service objects typically control access to an external system that is both stateful and mutable.
-                    I suspect that all of the methods exposed by service objects should be (a) idempotent and (b) transactional.
+                    Adapters often expose methods that can change the state of a database.
+                    As a rule, those methods should be (a) idempotent and (b) transactional.
                 </p> <p>
-                    Adapters don't let you do anything that can't be done with gateways, but they can be used to create a new layer of abstraction.
-                    In the best case scenario, that higher layer of abstraction completely hides the previous layer of abstraction while reducing the exposed surface area.
-                    That decouples higher layers of abstraction from lower layers, such that you can completely replace the lower layers without changing the higher layers.
+                    A distinction can be made between adapters that interact directly with the external world and those that don't.
+                    Adapters that interact directly with the external world must be written in a different language,
+                    because the runtime for a language cannot be implemented using the language itself.
                 </p> <p>
-                    I think it's helpful to maintain a mental model where different objects have different visual metaphors.
-                    Typically I think of message objects as something physical, like a package, and I think of service objects as something abstract, like the mail system.
-                    A programming joke that I've heard, paraphrased: "If somebody asks for a banana, don't give them a monkey that has a banana in one hand and a forest in the other."
+                    Different adapters can exist at different layers of abstraction.
+                    Higher layers of abstraction should completely hide lower layers of abstraction, and they should reduce the exposed surface area in the process.
+                    This makes it easier to replace a given layer.
                 </p> <p>
-                    This probably isn't an exhaustive taxonomy of objects-that-have-reasonable-semantics, but hopefully it's a step in that general direction.
+                    Messages are self-contained blobs of immutable state, and adapters are machines that change the world by pushing messages through pipes.
+                    A program that can't be understood in those terms, e.g. because messages sometimes push adapters through pipes, is very hard to reason about.
+                </p> <p>
+                    This isn't meant to be an exhaustive taxonomy of things-that-have-reasonable-semantics, but it is meant to be a step in that general direction.
                 </p>
 
 
@@ -129,8 +157,8 @@
 
 
                 <ul>
-                    <li>The public specification defines message objects and service interfaces.</li>
-                    <li>It does not define service objects.</li>
+                    <li>The public specification includes Message Classes and Ports.</li>
+                    <li>It does not include Adapters.</li>
                     <li>It does not depend on the internal specification, the internal implementation, or the public implementation.</li>
                     <li>Every type that it defines has public visibility.</li>
                 </ul>
@@ -140,8 +168,8 @@
 
 
                 <ul>
-                    <li>The internal specification defines message objects and service interfaces.</li>
-                    <li>It does not define service objects.</li>
+                    <li>The internal specification includes Message Classes and Ports.</li>
+                    <li>It does not include Adapters.</li>
                     <li>It does not depend on the internal implementation or the public implementation.</li>
                     <li>Every type that it defines has internal visibility.</li>
                 </ul>
@@ -151,8 +179,8 @@
 
 
                 <ul>
-                    <li>The internal implementation defines service objects.</li>
-                    <li>It does not define message objects or service interfaces.</li>
+                    <li>The internal implementation includes Adapters.</li>
+                    <li>It does not include Message Classes or Ports.</li>
                     <li>It does not depend on the public implementation.</li>
                     <li>Every type that it defines has internal visibility.</li>
                 </ul>
@@ -162,8 +190,8 @@
 
 
                 <ul>
-                    <li>The public implementation defines service objects.</li>
-                    <li>It does not define message objects or service interfaces.</li>
+                    <li>The public implementation includes Adapters.</li>
+                    <li>It does not include Message Classes or Ports.</li>
                     <li>Every type that it defines has public visibility.</li>
                 </ul>
 
